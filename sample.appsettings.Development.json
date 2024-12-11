@@ -1,0 +1,15 @@
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Data Source=database.db"
+  },
+  "SuperUser": {
+    "Email": "<email>",
+    "Password": "<password>"
+  },
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  }
+}

@@ -1,0 +1,60 @@
+# Step 1: Login and store the cookie
+POST https://localhost:5001/api/Authentication/login
+Content-Type: application/json
+
+{{superUserLogin}}
+
+> {%
+    client.global.set('cookie', response.headers.valueOf('Set-Cookie'));
+    client.test("Login_Should_Succeed", function () {
+        client.assert(response.status === 200, "Login failed");
+    });
+
+    const randomTenantName = `Tenant_${Math.random().toString(36).substring(2, 10)}`;
+    client.global.set('randomTenantName', randomTenantName);
+%}
+
+###
+
+# Step 2: Create the tenant using the random name
+POST https://localhost:5001/api/Tenants
+Content-Type: application/json
+Cookie: {{cookie}}
+
+{
+  "name": "{{randomTenantName}}",
+  "licences": 10
+}
+
+> {%
+    client.test("Tenant_Creation_Should_Succeed", function () {
+        client.assert(response.status === 200, "Tenant creation failed");
+        client.assert(response.body?.name === client.global.get("randomTenantName"), "Tenant name does not match");
+        client.assert(response.body?.licences === 10, "Tenant licences count does not match");
+        client.assert(response.body?.hasOwnProperty("id"), "Tenant has no Id");
+    });
+
+    client.global.set('randomUserEmail', $random.email);   
+    client.global.set('tenantId', response.body?.id);
+%}
+
+###
+
+# Step 3: Create the user using the random email
+POST https://localhost:5001/api/Tenants/{{tenantId}}/users
+Content-Type: application/json
+Cookie: {{cookie}}
+
+{
+  "email": "{{randomUserEmail}}",
+  "password": "1234"
+}
+
+> {%
+    client.test("User_Creation_Should_Succeed", function () {
+        client.assert(response.status === 200, "User creation failed");
+        client.assert(response.body?.email === client.global.get("randomUserEmail"), "User email does not match");
+        client.assert(response.body?.tenantId === client.global.get("tenantId"), "Tenant Id does not match");
+        client.assert(response.body?.hasOwnProperty("id"), "User has no Id");
+    });
+%}
