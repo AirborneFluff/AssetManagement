@@ -23,6 +23,7 @@ if (app.Environment.IsDevelopment())
 await app.RunStartupServices();
 
 app.UseHttpsRedirection();
+app.UseHealthChecks("/api/_health");
 
 app.UseAuthentication();
 app.UseAuthorization();

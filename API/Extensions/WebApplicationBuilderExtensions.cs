@@ -15,6 +15,7 @@ public static class WebApplicationBuilderExtensions
         builder.AddCustomServices();
         builder.AddDataContext();
         builder.AddIdentityServices();
+        builder.Services.AddHealthChecks();
         builder.Services.AddMediatR(c => c.RegisterServicesFromAssemblyContaining<Program>());
     }
 
@@ -63,6 +64,7 @@ public static class WebApplicationBuilderExtensions
     {
         builder.Services.AddScoped<UnitOfWork>();
         builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+        builder.Services.AddTransient<IStartupService, SeedUserRolesService>();
         builder.Services.AddTransient<IStartupService, CreateSuperUserService>();
 
         builder.Services.AddHttpContextAccessor();

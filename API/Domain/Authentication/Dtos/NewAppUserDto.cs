@@ -9,4 +9,6 @@ public class NewAppUserDto
 
     [MaxLength(254)]
     public required string Password { get; set; }
+
+    public required string Role { get; set; }
 }

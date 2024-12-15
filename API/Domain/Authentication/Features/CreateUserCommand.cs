@@ -12,6 +12,7 @@ public record CreateUserCommand(NewAppUserDto AppUserDto, string TenantId) : IRe
 
 public class CreateUserCommandHandler(UnitOfWork unitOfWork, 
     UserManager<AppUser> userManager, 
+    RoleManager<IdentityRole> roleManager,
     IMapper mapper) 
     : IRequestHandler<CreateUserCommand, Result<AppUserDto>>
 {
@@ -21,10 +22,20 @@ public class CreateUserCommandHandler(UnitOfWork unitOfWork,
             .SingleOrDefaultAsync(t => t.Id == request.TenantId, cancellationToken);
         if (tenant is null) return Result.Fail($"Tenant {request.TenantId} does not exist.");
         
+        var role = await roleManager.FindByNameAsync(request.AppUserDto.Role);
+        if (role is null) return Result.Fail($"Role {request.AppUserDto.Role} does not exist.");
+        
         var user = new AppUser(request.AppUserDto.Email, request.TenantId);
-        var result = await userManager.CreateAsync(user, request.AppUserDto.Password);
-
-        if (!result.Succeeded) return Result.Fail(result.Errors.Select(e => e.Description));
-        return mapper.Map<AppUserDto>(user);
+        var createUserResult = await userManager.CreateAsync(user, request.AppUserDto.Password);
+        if (!createUserResult.Succeeded) return Result.Fail(createUserResult.Errors.Select(e => e.Description));
+        
+        var addRoleResult = await userManager.AddToRoleAsync(user, role.Name!);
+        if (!addRoleResult.Succeeded) return Result.Fail(addRoleResult.Errors.Select(e => e.Description));
+    
+        var userDto = mapper.Map<AppUserDto>(user, opt =>
+        {
+            opt.Items["Role"] = role;
+        });
+        return userDto;
     }
 }
