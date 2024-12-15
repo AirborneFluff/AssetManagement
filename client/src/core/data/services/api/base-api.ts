@@ -4,7 +4,7 @@ import {
 
 export const baseApi = createApi({
   baseQuery: fetchBaseQuery({
-    baseUrl: `api/`
+    baseUrl: `/api/`
   }),
   keepUnusedDataFor: 0,
   refetchOnMountOrArgChange: true,
