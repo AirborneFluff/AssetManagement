@@ -1,8 +1,8 @@
 namespace API.Services.CurrentUser;
 
-public interface ICurrentUserService
+public interface IUserContext
 {
     string UserId { get; }
-    string TenantId { get; }
+    string? TenantId { get; }
     string Email { get; }
 }

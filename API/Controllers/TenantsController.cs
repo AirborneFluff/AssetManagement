@@ -21,6 +21,17 @@ public class TenantsController(IMediator mediator) : BaseApiController
         return Ok(result.Value);
     }
     
+    [HttpDelete("{tenantId}")]
+    [Authorize(Roles = "SuperUser")]
+    public async Task<IActionResult> DeleteTenant(string tenantId)
+    {
+        var command = new DeleteTenantCommand(tenantId);
+        var result = await mediator.Send(command);
+        if (result.IsFailed) return BadRequest(result.Errors);
+
+        return Ok(result.Value);
+    }
+    
     [HttpPost("{tenantId}/users")]
     [Authorize(Roles = "SuperUser,Admin")]
     public async Task<IActionResult> CreateUser([FromBody] NewAppUserDto dto, string tenantId)

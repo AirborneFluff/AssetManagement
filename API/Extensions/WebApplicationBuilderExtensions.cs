@@ -68,6 +68,6 @@ public static class WebApplicationBuilderExtensions
         builder.Services.AddTransient<IStartupService, CreateSuperUserService>();
 
         builder.Services.AddHttpContextAccessor();
-        builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+        builder.Services.AddScoped<IUserContext, UserContext>();
     }
 }
