@@ -3,8 +3,8 @@ import {
   Form,
   Input
 } from 'antd';
+import { CloseCircleTwoTone } from '@ant-design/icons';
 import { AssetForm } from '../../../core/data/entities/asset.ts';
-import { useState } from 'react';
 
 interface AssetManageFormProps {
   onSubmit: (data: AssetForm) => void;
@@ -12,9 +12,6 @@ interface AssetManageFormProps {
 
 export default function AssetManageForm({onSubmit}: AssetManageFormProps) {
   const [form] = Form.useForm<AssetForm>();
-  const [tagInput, setTagInput] = useState('');
-  const tags = Form.useWatch('tags', form);
-  const setTags = (items: string[]) => form.setFieldValue('tags', items);
 
   return (
     <Form<AssetForm>
@@ -34,41 +31,36 @@ export default function AssetManageForm({onSubmit}: AssetManageFormProps) {
       </Form.Item>
 
       <Form.Item label="Tags">
-        <Input.Group compact>
-          <Form.Item noStyle>
-            <Input
-              style={{width: 'calc(100% - 60px)', marginBottom: 8}}
-              placeholder="Enter tag"
-              value={tagInput}
-              onChange={(e) => setTagInput(e.target.value)}
-            />
-          </Form.Item>
-          <Button
-            type="primary"
-            onClick={() => {
-              if (tagInput && !(tags ?? []).includes(tagInput)) {
-                setTags([...(tags ?? []), tagInput]);
-                setTagInput('');
-              }
-            }}>
-            Add
-          </Button>
-        </Input.Group>
-
-        <div style={{marginTop: 8}}>
-          {(tags ?? []).map((tag, index) => (
-            <Button
-              key={index}
-              size="small"
-              type="default"
-              style={{marginRight: 5, marginBottom: 5}}
-              onClick={() => setTags((tags ?? []).filter((t) => t !== tag))}>
-              {tag} ✖
-            </Button>
-          ))}
-        </div>
+        <Form.List name="tags">
+          {(fields, { add, remove }) => (
+            <>
+              <div style={{ marginBottom: 8 }}>
+                {fields.map(({ key, name, ...restField }) => (
+                  <Input.Group key={key} compact>
+                    <Form.Item noStyle
+                      {...restField}
+                      name={name}
+                      rules={[{ required: true, message: 'Tag cannot be empty' }]}
+                    >
+                      <Input
+                        style={{width: 'calc(100% - 32px)', marginBottom: 8}}
+                        placeholder="Enter tag" />
+                    </Form.Item>
+                    <Button
+                      onClick={() => remove(name)}
+                      icon={<CloseCircleTwoTone twoToneColor="#ff4d4f" />}
+                    />
+                  </Input.Group>
+                ))}
+              </div>
+              <Button type="dashed" onClick={() => add()} block>
+                Add Tag
+              </Button>
+            </>
+          )}
+        </Form.List>
       </Form.Item>
-      
+
       <Button type="primary" htmlType="submit">
         Submit
       </Button>

@@ -18,8 +18,9 @@ public class DataContext(
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        ApplyEntityFilters<BaseEntity>(modelBuilder, nameof(SetTenantFilter));
-        ApplyEntityFilters<AuditEntity>(modelBuilder, nameof(SetIsDeletedFilter));
+        //ApplyEntityFilters<BaseEntity>(modelBuilder, nameof(SetTenantFilter));
+        //ApplyEntityFilters<AuditEntity>(modelBuilder, nameof(SetIsDeletedFilter));
+        modelBuilder.Entity<Asset>().HasQueryFilter(e => e.TenantId == userContext.TenantId);
 
         base.OnModelCreating(modelBuilder);
     }
