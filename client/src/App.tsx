@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import ContentLoading from './core/components/ContentLoading.tsx';
 
 const LoginScreen = React.lazy(() => import('./core/components/LoginScreen.tsx'));
-const AppScreen = React.lazy(() => import('./core/components/AppScreen.tsx'));
+const AppRoutes = React.lazy(() => import('./core/components/AppRoutes.tsx'));
 
 const App: React.FC = () => {
   const user = useSelector((state: RootState) => state.user.user);
@@ -17,12 +17,12 @@ const App: React.FC = () => {
         <Routes>
           <Route path="/" element={<Navigate to={isAuth ? '/app' : '/login'} />} />
           <Route
-            path="/login"
+            path="login"
             element={isAuth ? <Navigate to="/app" replace /> : <LoginScreen />}
           />
           <Route
-            path="/app/*"
-            element={!isAuth ? <Navigate to="/login" replace /> : <AppScreen />}
+            path="app/*"
+            element={!isAuth ? <Navigate to="/login" replace /> : <AppRoutes />}
           />
         </Routes>
       </React.Suspense>

@@ -4,11 +4,11 @@ import {
   AuditOutlined
 } from '@ant-design/icons';
 import { Button, MenuProps } from 'antd';
-import { Layout, Menu, theme } from 'antd';
+import { Layout, Menu } from 'antd';
 import { useLogout } from '../hooks/useLogout.ts';
 import { useNavigate } from 'react-router-dom';
 
-const { Header, Content, Footer, Sider } = Layout;
+const { Header, Content, Sider } = Layout;
 
 type MenuItem = Required<MenuProps>['items'][number];
 
@@ -16,25 +16,25 @@ export default function AppLayout({children}: {children: ReactNode}) {
   const onLogout = useLogout();
   const navigate = useNavigate();
 
-  const {
-    token: { colorBgContainer, borderRadiusLG },
-  } = theme.useToken();
-
-  function buildMenuItem(label: React.ReactNode, route: string, icon: React.ReactNode): MenuItem {
+  function buildMenuItem(label: React.ReactNode, route?: string, icon?: React.ReactNode, children?: MenuItem[]): MenuItem {
     return {
-      onClick: () => navigate(`/app/${route}`),
+      onClick: () => route ? navigate(`/app/${route}`) : undefined,
       key: route,
       icon,
       label,
+      children: children
     } as MenuItem;
   }
 
   const items: MenuItem[] = [
-    buildMenuItem('Assets', 'assets', <AuditOutlined />),
+    buildMenuItem('Assets', undefined, <AuditOutlined />, [
+      buildMenuItem('List', 'assets/list'),
+      buildMenuItem('Manage', 'assets/manage'),
+    ]),
   ];
 
   return (
-    <Layout style={{ minHeight: '100vh' }}>
+    <Layout style={{ height: '100dvh' }}>
       <Sider theme='light'>
         <div className={`flex flex-col justify-between h-full`}>
           <div className={`mt-12`}>
@@ -49,22 +49,12 @@ export default function AppLayout({children}: {children: ReactNode}) {
         </div>
       </Sider>
       <Layout>
-        <Header style={{ padding: 0, background: colorBgContainer, margin: '0 16px' }} />
-        <Content style={{ margin: '0 16px' }}>
-          <div
-            style={{
-              padding: 24,
-              minHeight: 360,
-              background: colorBgContainer,
-              borderRadius: borderRadiusLG,
-            }}
-          >
-            {children}
-          </div>
+        <Header className={`m-4 bg-white rounded-lg`}>
+          <p>Page Title</p>
+        </Header>
+        <Content className={`p-6 mx-4 mb-4 bg-white rounded-lg overflow-y-scroll`}>
+          {children}
         </Content>
-        <Footer style={{ textAlign: 'center' }}>
-          Ant Design ©{new Date().getFullYear()} Created by Ant UED
-        </Footer>
       </Layout>
     </Layout>
   );
