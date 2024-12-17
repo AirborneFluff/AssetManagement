@@ -2,6 +2,7 @@ using API.Domain.Asset;
 using API.Domain.Authentication;
 using API.Domain.Shared;
 using API.Domain.Tenant;
+using API.Extensions;
 using API.Services.CurrentUser;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -18,34 +19,8 @@ public class DataContext(
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        //ApplyEntityFilters<BaseEntity>(modelBuilder, nameof(SetTenantFilter));
-        //ApplyEntityFilters<AuditEntity>(modelBuilder, nameof(SetIsDeletedFilter));
-        modelBuilder.Entity<Asset>().HasQueryFilter(e => e.TenantId == userContext.TenantId);
-
+        modelBuilder.ApplyGlobalFilters(userContext);
         base.OnModelCreating(modelBuilder);
-    }
-    
-    private void ApplyEntityFilters<TEntity>(ModelBuilder modelBuilder, string methodName)
-    {
-        foreach (var entityType in modelBuilder.Model.GetEntityTypes())
-        {
-            if (!typeof(TEntity).IsAssignableFrom(entityType.ClrType)) continue;
-            var method = GetType()
-                .GetMethod(methodName, System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
-                ?.MakeGenericMethod(entityType.ClrType);
-
-            method?.Invoke(this, [modelBuilder]);
-        }
-    }
-
-    private void SetTenantFilter<TEntity>(ModelBuilder builder) where TEntity : BaseEntity
-    {
-        builder.Entity<TEntity>().HasQueryFilter(e => e.TenantId == userContext.TenantId);
-    }
-
-    private void SetIsDeletedFilter<TEntity>(ModelBuilder builder) where TEntity : AuditEntity
-    {
-        builder.Entity<TEntity>().HasQueryFilter(entity => !entity.IsDeleted);
     }
 
     public override int SaveChanges()
