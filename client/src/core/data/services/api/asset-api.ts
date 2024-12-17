@@ -1,5 +1,6 @@
 import { baseApi } from './base-api.ts';
 import { Asset, AssetForm } from '../../entities/asset.ts';
+import { PagedResponse } from '../../models/paged-response.ts';
 
 export const assetApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -9,11 +10,18 @@ export const assetApi = baseApi.injectEndpoints({
         method: 'POST',
         body: dto
       }),
+    }),
+    getAssets: builder.query<PagedResponse<Asset>, Record<string, string | number>>({
+      query: (params) => ({
+        url: '/assets',
+        params: params
+      })
     })
   }),
   overrideExisting: false,
 });
 
 export const {
-  useCreateAssetMutation
+  useCreateAssetMutation,
+  useGetAssetsQuery
 } = assetApi;
