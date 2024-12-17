@@ -1,4 +1,4 @@
-﻿namespace API.Domain.Shared;
+﻿namespace API.Domain.Shared.Params;
 
 public class BasePaginationParams
 {

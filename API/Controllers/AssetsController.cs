@@ -1,6 +1,7 @@
 ﻿using API.Domain.Asset.Dto;
 using API.Domain.Asset.Features;
-using API.Domain.Shared;
+using API.Domain.Shared.Params;
+using API.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -22,12 +23,13 @@ public class AssetsController(IMediator mediator) : BaseApiController
     
     [HttpGet]
     [Authorize]
-    public async Task<IActionResult> GetAssets([FromQuery]BasePaginationParams pageParams)
+    public async Task<IActionResult> GetAssets([FromQuery]SortableParams pageParams)
     {
         var command = new GetAssetsCommand(pageParams);
         var result = await mediator.Send(command);
         if (result.IsFailed) return BadRequest(result.Errors);
-
-        return Ok(result.Value);
+        
+        Response.AddPaginationHeaders(result.Value);
+        return Ok(result.Value.Items);
     }
 }

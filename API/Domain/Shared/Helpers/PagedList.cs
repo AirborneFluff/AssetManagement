@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using API.Domain.Shared.Params;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Domain.Shared.Helpers;
 

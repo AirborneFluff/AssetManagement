@@ -1,6 +1,9 @@
 import { baseApi } from './base-api.ts';
 import { Asset, AssetForm } from '../../entities/asset.ts';
-import { PagedResponse } from '../../models/paged-response.ts';
+import {
+  PagedResponse,
+  transformPagedResponse
+} from '../../models/paged-response.ts';
 
 export const assetApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -15,7 +18,8 @@ export const assetApi = baseApi.injectEndpoints({
       query: (params) => ({
         url: '/assets',
         params: params
-      })
+      }),
+      transformResponse: transformPagedResponse
     })
   }),
   overrideExisting: false,
