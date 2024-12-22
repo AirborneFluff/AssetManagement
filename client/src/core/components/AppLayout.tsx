@@ -1,44 +1,97 @@
 import React, { ReactNode } from 'react';
 import {
   LogoutOutlined,
-  AuditOutlined
+  AuditOutlined,
+  DashboardOutlined,
+  PieChartOutlined
 } from '@ant-design/icons';
 import { Button, MenuProps } from 'antd';
 import { Layout, Menu } from 'antd';
 import { useLogout } from '../hooks/useLogout.ts';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const { Header, Content, Sider } = Layout;
 
 type MenuItem = Required<MenuProps>['items'][number];
 
+interface MenuItemConfig {
+  label: string;
+  key?: string;
+  icon?: React.ReactNode;
+  children?: MenuItemConfig[];
+}
+
 export default function AppLayout({children}: {children: ReactNode}) {
   const onLogout = useLogout();
   const navigate = useNavigate();
+  const location = useLocation();
 
-  function buildMenuItem(label: React.ReactNode, route?: string, icon?: React.ReactNode, children?: MenuItem[]): MenuItem {
-    return {
-      onClick: () => route ? navigate(`/app/${route}`) : undefined,
-      key: route,
-      icon,
-      label,
-      children: children
-    } as MenuItem;
-  }
-
-  const items: MenuItem[] = [
-    buildMenuItem('Assets', undefined, <AuditOutlined />, [
-      buildMenuItem('List', 'assets/list'),
-      buildMenuItem('Manage', 'assets/manage'),
-    ]),
+  const menuItemsConfig: MenuItemConfig[] = [
+    {
+      label: 'Assets',
+      key: '/assets',
+      icon: <AuditOutlined />,
+      children: [
+        { label: 'List', key: '/assets/list' },
+        { label: 'Manage', key: '/assets/manage' },
+      ],
+    },
+    {
+      label: 'Dashboard',
+      icon: <DashboardOutlined />,
+      key: '/dashboard',
+    },
+    {
+      label: 'Reports',
+      key: '/reports',
+      icon: <PieChartOutlined />,
+      children: [
+        { label: 'Summary', key: '/reports/summary' },
+        { label: 'Charts', key: '/reports/charts' },
+      ],
+    },
   ];
+
+  const buildMenuItems = (itemsConfig: typeof menuItemsConfig): MenuItem[] => {
+    return itemsConfig.map((item) => {
+      if (item.children) {
+        return {
+          label: item.label,
+          key: item.key,
+          icon: item.icon,
+          children: buildMenuItems(item.children)
+        } as MenuItem;
+      }
+
+      return {
+        label: item.label,
+        key: item.key,
+        icon: item.icon,
+      } as MenuItem;
+    });
+  };
+
+  const menuItems = buildMenuItems(menuItemsConfig);
+
+  const selectedKey = location.pathname.replace('/app', '');
+  const openKeys = menuItemsConfig
+    .filter((item) =>
+      item.children?.some((child) => selectedKey.startsWith(child.key || ''))
+    )
+    .map((item) => item.key || '');
 
   return (
     <Layout style={{ height: '100dvh' }}>
       <Sider theme='light'>
         <div className={`flex flex-col justify-between h-full`}>
           <div className={`mt-12`}>
-            <Menu defaultSelectedKeys={['assets']} mode="inline" items={items} />
+            <Menu
+              mode="inline"
+              items={menuItems}
+              selectedKeys={[selectedKey]}
+              defaultOpenKeys={openKeys}
+              onClick={({ key }) => navigate(`/app${key}`)}
+            />
           </div>
           <Button
             onClick={() => onLogout()}
