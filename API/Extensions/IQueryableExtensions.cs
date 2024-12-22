@@ -21,4 +21,33 @@ public static class IQueryableExtensions
 
         return source.Provider.CreateQuery<T>(resultExpression);
     }
+    
+    public static IQueryable<TEntity> WhereContains<TEntity>(
+        this IQueryable<TEntity> query,
+        Expression<Func<TEntity, string>> propertySelector,
+        string? value
+    )
+        where TEntity : class
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return query;
+        }
+
+        var parameter = propertySelector.Parameters[0];
+        var property = Expression.Call(
+            propertySelector.Body,
+            typeof(string).GetMethod("ToLower", Type.EmptyTypes)!
+        );
+        var lowerValue = value.ToLower();
+        var condition = Expression.Call(
+            property,
+            typeof(string).GetMethod("Contains", new[] { typeof(string) })!,
+            Expression.Constant(lowerValue)
+        );
+
+        var lambda = Expression.Lambda<Func<TEntity, bool>>(condition, parameter);
+
+        return query.Where(lambda);
+    }
 }

@@ -4,6 +4,7 @@ import {
   PagedResponse,
   transformPagedResponse
 } from '../../models/paged-response.ts';
+import { Key } from 'react';
 
 export const assetApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -14,7 +15,7 @@ export const assetApi = baseApi.injectEndpoints({
         body: dto
       }),
     }),
-    getAssets: builder.query<PagedResponse<Asset>, Record<string, string | number>>({
+    getAssets: builder.query<PagedResponse<Asset>, Record<string, Key>>({
       query: (params) => ({
         url: '/assets',
         params: params

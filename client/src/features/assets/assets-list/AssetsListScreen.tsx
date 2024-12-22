@@ -1,25 +1,17 @@
-import { Table, TableProps, Tag } from 'antd';
+import { Table, Tag } from 'antd';
 import { useGetAssetsQuery } from '../../../core/data/services/api/asset-api.ts';
 import { Asset, AssetTag } from '../../../core/data/entities/asset.ts';
-import useTableParams, { BaseTableParams } from '../../../core/hooks/useTableParams.ts';
+import useTable from '../../../core/hooks/useTable.tsx';
+import { ListScreenLayout } from '../../shared/layouts/ListScreenLayout.tsx';
 
 const { Column } = Table;
 
 export default function AssetsListScreen() {
-  const { params, updateParams } = useTableParams<BaseTableParams>();
-  const {data} = useGetAssetsQuery({...params});
-
-  const handleTableChange: TableProps<Asset>['onChange'] = (pagination, _, sorter) => {
-    updateParams({
-      pageNumber: pagination.current,
-      pageSize: pagination.pageSize,
-      sortOrder: Array.isArray(sorter) ? undefined : sorter.order as string,
-      sortField: Array.isArray(sorter) ? undefined : sorter.field as string,
-    });
-  };
+  const { params, handleTableChange, getColumnSearchProps } = useTable<Asset>();
+  const {data} = useGetAssetsQuery(params);
 
   return (
-    <div className={`h-full`}>
+    <ListScreenLayout>
       <Table<Asset>
         pagination={{
           current: data?.pagination?.currentPage ?? 1,
@@ -36,7 +28,8 @@ export default function AssetsListScreen() {
           key="description"
           sorter={true}
           sortDirections={['descend', 'ascend']}
-         />
+          {...getColumnSearchProps()}
+        />
         <Column
           title="Tags"
           dataIndex="tags"
@@ -50,6 +43,6 @@ export default function AssetsListScreen() {
           }
         />
       </Table>
-    </div>
+    </ListScreenLayout>
   )
 }

@@ -1,5 +1,6 @@
 ﻿using API.Domain.Asset.Dto;
 using API.Domain.Asset.Features;
+using API.Domain.Asset.Params;
 using API.Domain.Shared.Params;
 using API.Extensions;
 using MediatR;
@@ -23,7 +24,7 @@ public class AssetsController(IMediator mediator) : BaseApiController
     
     [HttpGet]
     [Authorize]
-    public async Task<IActionResult> GetAssets([FromQuery]SortableParams pageParams)
+    public async Task<IActionResult> GetAssets([FromQuery]GetAssetsParams pageParams)
     {
         var command = new GetAssetsCommand(pageParams);
         var result = await mediator.Send(command);

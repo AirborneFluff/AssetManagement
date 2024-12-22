@@ -1,5 +1,6 @@
 ﻿using API.Data;
 using API.Domain.Asset.Dto;
+using API.Domain.Asset.Params;
 using API.Domain.Shared.Helpers;
 using API.Domain.Shared.Params;
 using API.Extensions;
@@ -10,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.Domain.Asset.Features;
 
-public record GetAssetsCommand(SortableParams PageParams) : IRequest<Result<PagedList<AssetDto>>>;
+public record GetAssetsCommand(GetAssetsParams PageParams) : IRequest<Result<PagedList<AssetDto>>>;
 
 public class GetAssetsHandler(
     UnitOfWork unitOfWork,
@@ -22,6 +23,7 @@ public class GetAssetsHandler(
             .AsNoTracking()
             .AsQueryable()
             .Include(a => a.Tags)
+            .WhereContains(x => x.Description, request.PageParams.Description)
             .OrderByField(request.PageParams.SortField, request.PageParams.SortOrder);
 
         var results = await PagedList<Asset>
