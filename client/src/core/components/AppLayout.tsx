@@ -3,14 +3,15 @@ import {
   LogoutOutlined,
   AuditOutlined,
   DashboardOutlined,
-  PieChartOutlined
+  PieChartOutlined,
+  ArrowLeftOutlined
 } from '@ant-design/icons';
-import { Button, MenuProps } from 'antd';
+import { Breadcrumb, Button, MenuProps } from 'antd';
 import { Layout, Menu } from 'antd';
 import { useLogout } from '../hooks/useLogout.ts';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-const { Header, Content, Sider } = Layout;
+const { Content, Sider } = Layout;
 
 type MenuItem = Required<MenuProps>['items'][number];
 
@@ -80,6 +81,29 @@ export default function AppLayout({children}: {children: ReactNode}) {
     )
     .map((item) => item.key || '');
 
+  const findBreadcrumbTrail = (
+    key: string | undefined,
+    itemsConfig: MenuItemConfig[],
+    trail: MenuItemConfig[] = []
+  ): MenuItemConfig[] => {
+    for (const item of itemsConfig) {
+      if (item.key === key) {
+        return [...trail, item];
+      }
+      if (item.children) {
+        const foundTrail = findBreadcrumbTrail(key, item.children, [...trail, item]);
+        if (foundTrail.length) {
+          return foundTrail;
+        }
+      }
+    }
+    return [];
+  };
+
+  const breadcrumbTrail = findBreadcrumbTrail(selectedKey, menuItemsConfig);
+
+  const navigateBack = () => navigate(-1);
+
   return (
     <Layout style={{ height: '100dvh' }}>
       <Sider theme='light'>
@@ -102,10 +126,19 @@ export default function AppLayout({children}: {children: ReactNode}) {
         </div>
       </Sider>
       <Layout>
-        <Header className={`m-4 bg-white rounded-lg`}>
-          <p>Page Title</p>
-        </Header>
-        <Content className={`p-6 mx-4 mb-4 bg-white rounded-lg overflow-y-scroll`}>
+        <div className={`m-4 py-4 px-2 bg-white rounded-lg flex items-center justify-start gap-4`}>
+          <Button icon={<ArrowLeftOutlined />} type='text' onClick={navigateBack}>Back</Button>
+          <Breadcrumb>
+            {breadcrumbTrail.map((item) => {
+              return (
+                <Breadcrumb.Item key={item.key}>
+                  {item.label}
+                </Breadcrumb.Item>
+              );
+            })}
+          </Breadcrumb>
+        </div>
+        <Content className={`p-6 mx-4 mb-4 bg-white rounded-lg overflow-y-auto`}>
           {children}
         </Content>
       </Layout>
