@@ -33,8 +33,17 @@ export default function AppLayout({children}: {children: ReactNode}) {
       key: '/assets',
       icon: <AuditOutlined />,
       children: [
-        { label: 'List', key: '/assets/list' },
-        { label: 'Manage', key: '/assets/manage' },
+        { label: 'Assets', key: '/' },
+        { label: 'Manage', key: '/manage' },
+        {
+          label: 'Categories',
+          key: '/assets/categories',
+          icon: <AuditOutlined />,
+          children: [
+            { label: 'Categories', key: '/' },
+            { label: 'Manage', key: '/manage' },
+          ],
+        },
       ],
     },
     {
@@ -47,26 +56,26 @@ export default function AppLayout({children}: {children: ReactNode}) {
       key: '/reports',
       icon: <PieChartOutlined />,
       children: [
-        { label: 'Summary', key: '/reports/summary' },
-        { label: 'Charts', key: '/reports/charts' },
+        { label: 'Summary', key: '/summary' },
+        { label: 'Charts', key: '/charts' },
       ],
     },
   ];
 
-  const buildMenuItems = (itemsConfig: typeof menuItemsConfig): MenuItem[] => {
+  const buildMenuItems = (itemsConfig: typeof menuItemsConfig, parentKey?: string): MenuItem[] => {
     return itemsConfig.map((item) => {
       if (item.children) {
         return {
           label: item.label,
-          key: item.key,
+          key: (parentKey ?? '') + item.key,
           icon: item.icon,
-          children: buildMenuItems(item.children)
+          children: buildMenuItems(item.children, item.key)
         } as MenuItem;
       }
 
       return {
         label: item.label,
-        key: item.key,
+        key: (parentKey ?? '') + item.key,
         icon: item.icon,
       } as MenuItem;
     });
@@ -87,16 +96,20 @@ export default function AppLayout({children}: {children: ReactNode}) {
     trail: MenuItemConfig[] = []
   ): MenuItemConfig[] => {
     for (const item of itemsConfig) {
+      const currentTrail = [...trail, item];
+
       if (item.key === key) {
-        return [...trail, item];
+        return currentTrail;
       }
+
       if (item.children) {
-        const foundTrail = findBreadcrumbTrail(key, item.children, [...trail, item]);
+        const foundTrail = findBreadcrumbTrail(key, item.children, currentTrail);
         if (foundTrail.length) {
           return foundTrail;
         }
       }
     }
+
     return [];
   };
 

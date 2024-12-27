@@ -22,7 +22,9 @@ public class GetAssetsHandler(
             .AsNoTracking()
             .AsQueryable()
             .Include(a => a.Tags)
+            .Include(a => a.Category)
             .WhereContains(x => x.Description, request.PageParams.Description)
+            .WhereContains(x => x.Category!.Name, request.PageParams.CategoryName)
             .OrderByField(request.PageParams.SortField, request.PageParams.SortOrder);
 
         var results = await PagedList<Asset>

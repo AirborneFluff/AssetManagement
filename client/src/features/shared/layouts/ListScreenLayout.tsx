@@ -10,7 +10,7 @@ interface ListScreenLayoutProps {
 export function ListScreenLayout({children, addItemText}: ListScreenLayoutProps) {
   const navigate = useNavigate();
 
-  const navigateToManage = () => navigate('../manage');
+  const navigateToManage = () => navigate('manage');
 
   return (
     <>

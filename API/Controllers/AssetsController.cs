@@ -42,4 +42,16 @@ public class AssetsController(IMediator mediator) : BaseApiController
 
         return Ok(result.Value);
     }
+    
+    [HttpGet("Categories")]
+    [Authorize]
+    public async Task<IActionResult> GetAssetCategories([FromQuery]GetAssetCategoriesParams pageParams)
+    {
+        var command = new GetAssetCategoriesCommand(pageParams);
+        var result = await mediator.Send(command);
+        if (result.IsFailed) return BadRequest(result.Errors);
+        
+        Response.AddPaginationHeaders(result.Value);
+        return Ok(result.Value.Items);
+    }
 }

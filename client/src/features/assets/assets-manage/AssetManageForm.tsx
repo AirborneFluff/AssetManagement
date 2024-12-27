@@ -1,16 +1,21 @@
 import {
   Button,
   Form,
-  Input
+  Input, Select
 } from 'antd';
 import { CloseCircleTwoTone } from '@ant-design/icons';
-import { AssetForm } from '../../../core/data/entities/asset.ts';
+import { AssetForm } from '../../../core/data/entities/asset/asset.ts';
+import { useGetAssetCategoriesQuery } from '../../../core/data/services/api/asset-api.ts';
+import { useSelectSearch } from '../../../core/hooks/useSelectSearch.ts';
 
 interface AssetManageFormProps {
   onSubmit: (data: AssetForm) => void;
 }
 
 export default function AssetManageForm({onSubmit}: AssetManageFormProps) {
+  const {onSearch, params: result} = useSelectSearch('name');
+  const { data: categories, isFetching } = useGetAssetCategoriesQuery(result);
+
   const [form] = Form.useForm<AssetForm>();
 
   return (
@@ -29,6 +34,25 @@ export default function AssetManageForm({onSubmit}: AssetManageFormProps) {
         tooltip="This is a required field">
         <Input />
       </Form.Item>
+
+      <Form.Item
+        rules={[{ required: true }]}
+        label="Category"
+        name='categoryId'
+        tooltip="This is a required field">
+        <Select
+          showSearch
+          defaultActiveFirstOption={true}
+          filterOption={false}
+          onSearch={onSearch}
+          loading={isFetching}
+          options={(categories?.items || []).map((category) => ({
+            value: category.id,
+            label: category.name,
+          }))}
+        />
+      </Form.Item>
+
 
       <Form.Item label="Tags">
         <Form.List name="tags">

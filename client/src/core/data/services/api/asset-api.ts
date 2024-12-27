@@ -1,10 +1,11 @@
 import { baseApi } from './base-api.ts';
-import { Asset, AssetForm } from '../../entities/asset.ts';
+import { Asset, AssetForm } from '../../entities/asset/asset.ts';
 import {
   PagedResponse,
   transformPagedResponse
 } from '../../models/paged-response.ts';
 import { Key } from 'react';
+import { AssetCategory, AssetCategoryForm } from '../../entities/asset/asset-category.ts';
 
 export const assetApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -15,9 +16,23 @@ export const assetApi = baseApi.injectEndpoints({
         body: dto
       }),
     }),
+    createAssetCategory: builder.mutation<AssetCategory, AssetCategoryForm>({
+      query: (dto) => ({
+        url: '/assets/categories',
+        method: 'POST',
+        body: dto
+      }),
+    }),
     getAssets: builder.query<PagedResponse<Asset>, Record<string, Key>>({
       query: (params) => ({
         url: '/assets',
+        params: params
+      }),
+      transformResponse: transformPagedResponse
+    }),
+    getAssetCategories: builder.query<PagedResponse<AssetCategory>, Record<string, Key>>({
+      query: (params) => ({
+        url: '/assets/categories',
         params: params
       }),
       transformResponse: transformPagedResponse
@@ -28,5 +43,7 @@ export const assetApi = baseApi.injectEndpoints({
 
 export const {
   useCreateAssetMutation,
-  useGetAssetsQuery
+  useCreateAssetCategoryMutation,
+  useGetAssetsQuery,
+  useGetAssetCategoriesQuery
 } = assetApi;

@@ -6,19 +6,32 @@ public static class IQueryableExtensions
 {
     public static IQueryable<T> OrderByField<T>(this IQueryable<T> source, string sortField, string sortBy)
     {
-        if (String.IsNullOrWhiteSpace(sortField) || String.IsNullOrWhiteSpace(sortBy))
+        if (string.IsNullOrWhiteSpace(sortField) || string.IsNullOrWhiteSpace(sortBy))
         {
             return source;
         }
-        
+    
         var parameter = Expression.Parameter(typeof(T), "x");
-        var property = Expression.PropertyOrField(parameter, sortField);
+
+        Expression property = parameter;
+        foreach (var member in sortField.Split('.'))
+        {
+            property = Expression.PropertyOrField(property, member);
+        }
+
         var lambda = Expression.Lambda(property, parameter);
 
         var method = sortBy.ToLower() == "descend" ? "OrderByDescending" : "OrderBy";
-        var resultExpression = Expression.Call(typeof(Queryable), method, [typeof(T), property.Type],
-            source.Expression, Expression.Quote(lambda));
 
+        var resultExpression = Expression.Call(
+            typeof(Queryable),
+            method,
+            new Type[] { typeof(T), property.Type },
+            source.Expression,
+            Expression.Quote(lambda)
+        );
+
+        // Return the ordered query
         return source.Provider.CreateQuery<T>(resultExpression);
     }
     

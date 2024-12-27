@@ -26,12 +26,16 @@ export default function useTable<T>() {
       pageNumber: pagination.current ?? 1,
       pageSize: pagination.pageSize ?? 10,
       sortOrder: Array.isArray(sorter) ? undefined : (sorter.order as string),
-      sortField: Array.isArray(sorter) ? undefined : (sorter.field as string),
+      sortField: Array.isArray(sorter) ? undefined : (convertCamelToDot(sorter.columnKey as string)),
       ...flattenTableFilters(filters)
     }
-    console.log(flatFilters);
+    console.log(filters)
     setParams(flatFilters as Record<string, Key>);
   };
+
+  function convertCamelToDot(camelCaseString: string): string {
+    return camelCaseString?.replace(/([a-z])([A-Z])/g, '$1.$2').toLowerCase();
+  }
 
   const getColumnSearchProps = (): Partial<TableColumnType<T>> => ({
     filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters, close }) => (

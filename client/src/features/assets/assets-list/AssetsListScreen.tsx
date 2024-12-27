@@ -1,6 +1,6 @@
 import { Table, Tag } from 'antd';
 import { useGetAssetsQuery } from '../../../core/data/services/api/asset-api.ts';
-import { Asset, AssetTag } from '../../../core/data/entities/asset.ts';
+import { Asset, AssetTag } from '../../../core/data/entities/asset/asset.ts';
 import useTable from '../../../core/hooks/useTable.tsx';
 import { ListScreenLayout } from '../../shared/layouts/ListScreenLayout.tsx';
 
@@ -26,6 +26,14 @@ export default function AssetsListScreen() {
           title="Description"
           dataIndex="description"
           key="description"
+          sorter={true}
+          sortDirections={['descend', 'ascend']}
+          {...getColumnSearchProps()}
+        />
+        <Column
+          title="Category"
+          render={(record: Asset) => record.category?.name || 'N/A'}
+          key="categoryName"
           sorter={true}
           sortDirections={['descend', 'ascend']}
           {...getColumnSearchProps()}
