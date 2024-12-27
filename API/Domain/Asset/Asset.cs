@@ -6,4 +6,7 @@ public class Asset : BaseEntity
 {
     public required string Description { get; set; }
     public List<AssetTag> Tags { get; set; } = [];
+
+    public required string CategoryId { get; set; }
+    public AssetCategory? Category { get; set; }
 }

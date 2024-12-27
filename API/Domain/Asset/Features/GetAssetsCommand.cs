@@ -1,8 +1,7 @@
-﻿using API.Data;
+﻿using API.Data.Interfaces;
 using API.Domain.Asset.Dto;
 using API.Domain.Asset.Params;
 using API.Domain.Shared.Helpers;
-using API.Domain.Shared.Params;
 using API.Extensions;
 using AutoMapper;
 using FluentResults;
@@ -14,7 +13,7 @@ namespace API.Domain.Asset.Features;
 public record GetAssetsCommand(GetAssetsParams PageParams) : IRequest<Result<PagedList<AssetDto>>>;
 
 public class GetAssetsHandler(
-    UnitOfWork unitOfWork,
+    IUnitOfWork unitOfWork,
     IMapper mapper) : IRequestHandler<GetAssetsCommand, Result<PagedList<AssetDto>>>
 {
     public async Task<Result<PagedList<AssetDto>>> Handle(GetAssetsCommand request, CancellationToken cancellationToken)

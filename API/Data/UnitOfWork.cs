@@ -1,8 +1,12 @@
+using API.Data.Interfaces;
+using API.Domain.Asset.Repositories;
+
 namespace API.Data;
 
-public class UnitOfWork(DataContext dataContext)
+public class UnitOfWork(DataContext dataContext) : IUnitOfWork
 {
     public DataContext Context { get; } = dataContext;
+    public IAssetCategoryRepository AssetCategoryRepository => new AssetCategoryRepository(Context);
 
     public async Task<bool> Complete()
     {

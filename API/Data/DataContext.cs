@@ -1,3 +1,5 @@
+using System.Linq.Expressions;
+using System.Reflection;
 using API.Domain.Asset;
 using API.Domain.Authentication;
 using API.Domain.Shared;
@@ -9,18 +11,19 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.Data;
 
-public class DataContext(
-    DbContextOptions<DataContext> options,
-    IUserContext userContext
-) : IdentityDbContext<AppUser>(options)
+public class DataContext(DbContextOptions<DataContext> options, IUserContext userContext)
+    : IdentityDbContext<AppUser>(options)
 {
     public DbSet<AppTenant> Tenants { get; set; }
     public DbSet<Asset> Assets { get; set; }
+    public DbSet<AssetCategory> AssetCategories { get; set; }
+    
+    protected IUserContext userContext { get; set; } = userContext;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.ApplyGlobalFilters(userContext);
         base.OnModelCreating(modelBuilder);
+        ApplyGlobalFilters(modelBuilder);
     }
 
     public override int SaveChanges()
@@ -75,6 +78,51 @@ public class DataContext(
             {
                 entry.Entity.TenantId = tenantId;
             }
+        }
+    }
+    
+    private void ApplyGlobalFilters(ModelBuilder modelBuilder)
+    {
+        foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+        {
+            var isBaseEntity = typeof(BaseEntity).IsAssignableFrom(entityType.ClrType);
+            var isAuditEntity = typeof(AuditEntity).IsAssignableFrom(entityType.ClrType);
+
+            if (!isBaseEntity && !isAuditEntity) continue;
+
+            var parameter = Expression.Parameter(entityType.ClrType, "e");
+            Expression? combinedFilter = null;
+
+            if (isBaseEntity)
+            {
+                var tenantIdProperty = Expression.Property(parameter, "TenantId");
+
+                var tenantIdAccessor = Expression.MakeMemberAccess(
+                    Expression.Constant(this, GetType()),
+                    GetType().GetProperty(nameof(userContext), BindingFlags.Instance | BindingFlags.NonPublic)!
+                );
+
+                var tenantIdValue = Expression.MakeMemberAccess(
+                    tenantIdAccessor,
+                    typeof(IUserContext).GetProperty(nameof(IUserContext.TenantId))!
+                );
+
+                var tenantFilter = Expression.Equal(tenantIdProperty, tenantIdValue);
+                combinedFilter = combinedFilter == null ? tenantFilter : Expression.AndAlso(combinedFilter, tenantFilter);
+            }
+
+            if (isAuditEntity)
+            {
+                var isDeletedProperty = Expression.Property(parameter, "IsDeleted");
+                var isDeletedFilter = Expression.Equal(isDeletedProperty, Expression.Constant(false));
+
+                combinedFilter = combinedFilter == null ? isDeletedFilter : Expression.AndAlso(combinedFilter, isDeletedFilter);
+            }
+
+            if (combinedFilter == null) continue;
+
+            var filterExpression = Expression.Lambda(combinedFilter, parameter);
+            modelBuilder.Entity(entityType.ClrType).HasQueryFilter(filterExpression);
         }
     }
 }

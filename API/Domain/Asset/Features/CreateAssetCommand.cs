@@ -1,4 +1,4 @@
-﻿using API.Data;
+﻿using API.Data.Interfaces;
 using API.Domain.Asset.Dto;
 using AutoMapper;
 using FluentResults;
@@ -9,7 +9,7 @@ namespace API.Domain.Asset.Features;
 public record CreateAssetCommand(NewAssetDto Asset) : IRequest<Result<AssetDto>>;
 
 public class CreateAssetHandler(
-    UnitOfWork unitOfWork,
+    IUnitOfWork unitOfWork,
     IMapper mapper) : IRequestHandler<CreateAssetCommand, Result<AssetDto>>
 {
     public async Task<Result<AssetDto>> Handle(CreateAssetCommand request, CancellationToken cancellationToken)

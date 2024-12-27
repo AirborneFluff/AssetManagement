@@ -1,4 +1,4 @@
-﻿using API.Data;
+﻿using API.Data.Interfaces;
 using AutoMapper;
 using FluentResults;
 using MediatR;
@@ -9,7 +9,7 @@ namespace API.Domain.Asset.Features;
 public record DeleteAssetCommand(string AssetId) : IRequest<Result>;
 
 public class DeleteAssetHandler(
-    UnitOfWork unitOfWork,
+    IUnitOfWork unitOfWork,
     IMapper mapper) : IRequestHandler<DeleteAssetCommand, Result>
 {
     public async Task<Result> Handle(DeleteAssetCommand request, CancellationToken cancellationToken)

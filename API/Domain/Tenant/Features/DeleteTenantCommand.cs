@@ -1,4 +1,4 @@
-﻿using API.Data;
+﻿using API.Data.Interfaces;
 using API.Domain.Tenant.DTOs;
 using AutoMapper;
 using FluentResults;
@@ -10,7 +10,7 @@ namespace API.Domain.Tenant.Features;
 public record DeleteTenantCommand(string TenantId) : IRequest<Result<TenantDto>>;
 
 public class DeleteTenantHandler(
-    UnitOfWork unitOfWork, 
+    IUnitOfWork unitOfWork, 
     IMapper mapper) : IRequestHandler<DeleteTenantCommand, Result<TenantDto>>
 {
     public async Task<Result<TenantDto>> Handle(DeleteTenantCommand request, CancellationToken cancellationToken)
