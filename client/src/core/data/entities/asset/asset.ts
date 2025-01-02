@@ -1,7 +1,7 @@
 import { AssetCategory } from './asset-category.ts';
+import { BaseEntity } from '../base-entity.ts';
 
-export interface Asset {
-  id: string;
+export interface Asset extends BaseEntity {
   category?: AssetCategory;
   description: string;
   tags: AssetTag[];

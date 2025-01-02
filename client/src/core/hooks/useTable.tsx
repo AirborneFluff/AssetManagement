@@ -1,7 +1,9 @@
-import { Key, useState, useRef } from 'react';
-import { Button, Input, Space, TableColumnType, InputRef, TableProps } from 'antd';
+import { Key, ReactElement, useRef, useState } from 'react';
+import { Button, Input, InputRef, Space, Table, TableColumnType, TableProps } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import { flattenTableFilters } from '../helpers/convertFilterArray.ts';
+import { BaseEntity } from '../data/entities/base-entity.ts';
+import { PagedResponse } from '../data/models/paged-response.ts';
 
 export interface BaseTableParams {
   pageNumber: number;
@@ -10,7 +12,21 @@ export interface BaseTableParams {
   sortField?: string | undefined;
 }
 
-export default function useTable<T>() {
+export type UseTableResult<T extends BaseEntity> = (columns: SearchableColumnProps<T>) => ReactElement;
+
+export type SearchableColumnProps<T> = (TableColumnType<T> & {
+  showSearch?: boolean;
+})[];
+
+export default function useTable<T extends BaseEntity>(
+  useQuery: (
+    params: Record<string, Key>
+  ) => {
+    data?: PagedResponse<T>;
+    isFetching: boolean;
+    isError: boolean;
+  }
+): UseTableResult<T> {
   const searchInput = useRef<InputRef>(null);
   const initialParams: BaseTableParams = {
     pageNumber: 1,
@@ -21,6 +37,8 @@ export default function useTable<T>() {
     ...initialParams
   });
 
+  const {data, isFetching} = useQuery(params);
+
   const handleTableChange: TableProps<T>['onChange'] = (pagination, filters, sorter) => {
     const flatFilters = {
       pageNumber: pagination.current ?? 1,
@@ -29,7 +47,6 @@ export default function useTable<T>() {
       sortField: Array.isArray(sorter) ? undefined : (convertCamelToDot(sorter.columnKey as string)),
       ...flattenTableFilters(filters)
     }
-    console.log(filters)
     setParams(flatFilters as Record<string, Key>);
   };
 
@@ -83,9 +100,30 @@ export default function useTable<T>() {
     },
   });
 
-  return {
-    params,
-    getColumnSearchProps,
-    handleTableChange,
+  return (columns: SearchableColumnProps<T>): ReactElement => {
+    const enhancedColumns = columns.map((column) => {
+      return column.showSearch
+        ? {
+          ...column,
+          ...getColumnSearchProps(),
+        }
+        : column;
+    });
+
+    return (
+      <Table<T>
+        loading={isFetching}
+        dataSource={data?.items || []}
+        rowKey={(item: T) => item.id}
+        onChange={handleTableChange}
+        pagination={{
+          current: data?.pagination?.currentPage || 1,
+          pageSize: data?.pagination?.pageSize || 10,
+          total: data?.pagination?.totalCount || 0,
+        }}
+        columns={enhancedColumns as TableProps<T>['columns']}
+        bordered
+      />
+    )
   };
 }
