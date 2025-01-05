@@ -16,6 +16,13 @@ export const assetApi = baseApi.injectEndpoints({
         body: dto
       }),
     }),
+    updateAsset: builder.mutation<Asset, AssetForm>({
+      query: (dto) => ({
+        url: `/assets/${dto.id}`,
+        method: 'PUT',
+        body: dto
+      }),
+    }),
     createAssetCategory: builder.mutation<AssetCategory, AssetCategoryForm>({
       query: (dto) => ({
         url: '/assets/categories',
@@ -29,6 +36,11 @@ export const assetApi = baseApi.injectEndpoints({
         params: params
       }),
       transformResponse: transformPagedResponse
+    }),
+    getAsset: builder.query<Asset, string>({
+      query: (assetId) => ({
+        url: `/assets/${assetId}`
+      })
     }),
     getAssetCategories: builder.query<PagedResponse<AssetCategory>, Record<string, Key>>({
       query: (params) => ({
@@ -44,6 +56,8 @@ export const assetApi = baseApi.injectEndpoints({
 export const {
   useCreateAssetMutation,
   useCreateAssetCategoryMutation,
+  useUpdateAssetMutation,
   useGetAssetsQuery,
+  useLazyGetAssetQuery,
   useGetAssetCategoriesQuery
 } = assetApi;

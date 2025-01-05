@@ -8,7 +8,8 @@ export default function AssetsRoutes() {
   return (
     <Routes>
       <Route path="/" element={<AssetsListScreen />} />
-      <Route path="manage" element={<AssetManageScreen />} />
+      <Route path="manage/:assetId" element={<AssetManageScreen />} />
+      <Route path="manage/" element={<AssetManageScreen />} />
       <Route path="categories" element={<AssetCategoriesListScreen />} />
       <Route path="categories/manage" element={<AssetCategoryManageScreen />} />
     </Routes>

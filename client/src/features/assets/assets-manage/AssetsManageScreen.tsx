@@ -1,28 +1,25 @@
 import AssetManageForm from './AssetManageForm.tsx';
-import { useCreateAssetMutation } from '../../../core/data/services/api/asset-api.ts';
-import { AssetForm } from '../../../core/data/entities/asset/asset.ts';
+import { useCreateAssetMutation, useUpdateAssetMutation } from '../../../core/data/services/api/asset-api.ts';
+import { Asset, AssetForm } from '../../../core/data/entities/asset/asset.ts';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
+import { useCombinedAssetMutations } from '../../../core/hooks/useCombineFormMutations.ts';
 
 export default function AssetManageScreen() {
-  const [createAsset, {isSuccess: createSuccess}] = useCreateAssetMutation();
+  const {isLoading, onSubmit, isSuccess} =
+    useCombinedAssetMutations<AssetForm, Asset>(useCreateAssetMutation, useUpdateAssetMutation);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (createSuccess) {
+    if (isSuccess) {
       navigate(`/app/assets`);
     }
-  }, [createSuccess, navigate]);
-
-  const handleOnFormSubmit = (data: AssetForm) => {
-    if (data.id) {
-      return;
-    }
-
-    createAsset(data);
-  }
+  }, [isSuccess, navigate]);
 
   return (
-    <AssetManageForm onSubmit={handleOnFormSubmit} />
+    <AssetManageForm
+      isLoading={isLoading}
+      onSubmit={onSubmit}
+    />
   );
 }

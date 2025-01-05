@@ -4,19 +4,36 @@ import {
   Input, Select
 } from 'antd';
 import { CloseCircleTwoTone } from '@ant-design/icons';
-import { AssetForm } from '../../../core/data/entities/asset/asset.ts';
-import { useGetAssetCategoriesQuery } from '../../../core/data/services/api/asset-api.ts';
+import { Asset, AssetForm } from '../../../core/data/entities/asset/asset.ts';
+import { useGetAssetCategoriesQuery, useLazyGetAssetQuery } from '../../../core/data/services/api/asset-api.ts';
 import { useSelectSearch } from '../../../core/hooks/useSelectSearch.ts';
+import { useParams } from 'react-router-dom';
+import { useManageForm } from '../../../core/hooks/useManageForm.ts';
+import { cleanFormValues } from '../../../core/helpers/cleanFormValues.ts';
+import { useCallback } from 'react';
+import { FormProps } from '../../../core/data/models/forms/FormProps.ts';
 
-interface AssetManageFormProps {
-  onSubmit: (data: AssetForm) => void;
-}
-
-export default function AssetManageForm({onSubmit}: AssetManageFormProps) {
-  const {onSearch, params: result} = useSelectSearch('name');
+export default function AssetManageForm({onSubmit, isLoading}: FormProps<AssetForm>) {
+  const { assetId } = useParams<{ assetId: string }>();
+  const { onSearch, params: result } = useSelectSearch('name');
   const { data: categories, isFetching } = useGetAssetCategoriesQuery(result);
 
   const [form] = Form.useForm<AssetForm>();
+  const handleSuccess = useCallback((asset: Asset) => {
+    form.setFieldValue('id', asset.id);
+    form.setFieldValue('description', asset.description);
+    form.setFieldValue('categoryId', {
+      value: asset.category?.id,
+      label: asset.category?.name,
+    });
+    form.setFieldValue('tags', asset.tags.map(tag => tag.tag));
+  }, [form]);
+
+  const { formLoading } = useManageForm<Asset>({
+    id: assetId,
+    queryHook: useLazyGetAssetQuery,
+    onSuccess: handleSuccess
+  });
 
   return (
     <Form<AssetForm>
@@ -24,9 +41,12 @@ export default function AssetManageForm({onSubmit}: AssetManageFormProps) {
       wrapperCol={{ span: 14 }}
       layout="vertical"
       style={{ maxWidth: 600 }}
+      disabled={isLoading || formLoading}
       form={form}
-      onFinish={onSubmit}
+      onFinish={(data) => onSubmit(cleanFormValues(data))}
     >
+      <Form.Item hidden name='id' />
+
       <Form.Item
         rules={[{ required: true }]}
         label="Description"
@@ -46,7 +66,7 @@ export default function AssetManageForm({onSubmit}: AssetManageFormProps) {
           filterOption={false}
           onSearch={onSearch}
           loading={isFetching}
-          options={(categories?.items || []).map((category) => ({
+          options={(categories?.items ?? []).map((category) => ({
             value: category.id,
             label: category.name,
           }))}

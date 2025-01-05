@@ -1,13 +1,13 @@
 import { Button } from 'antd';
 import { useNavigate } from 'react-router-dom';
-import { ReactElement } from 'react';
+import { ReactNode } from 'react';
 
 interface ListScreenLayoutProps {
-  table: ReactElement;
+  children: ReactNode;
   addItemText?: string;
 }
 
-export function ListScreenLayout({table, addItemText}: ListScreenLayoutProps) {
+export function ListScreenLayout({children, addItemText}: ListScreenLayoutProps) {
   const navigate = useNavigate();
 
   const navigateToManage = () => navigate('manage');
@@ -15,7 +15,7 @@ export function ListScreenLayout({table, addItemText}: ListScreenLayoutProps) {
   return (
     <>
       <Button className='mb-4' onClick={navigateToManage}>{addItemText ?? 'Add'}</Button>
-      {table}
+      {children}
     </>
   )
 }

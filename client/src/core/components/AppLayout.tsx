@@ -6,7 +6,7 @@ import {
   PieChartOutlined,
   ArrowLeftOutlined
 } from '@ant-design/icons';
-import { Breadcrumb, Button, MenuProps } from 'antd';
+import { Button, MenuProps } from 'antd';
 import { Layout, Menu } from 'antd';
 import { useLogout } from '../hooks/useLogout.ts';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -34,15 +34,9 @@ export default function AppLayout({children}: {children: ReactNode}) {
       icon: <AuditOutlined />,
       children: [
         { label: 'Assets', key: '/' },
-        { label: 'Manage', key: '/manage' },
         {
           label: 'Categories',
-          key: '/assets/categories',
-          icon: <AuditOutlined />,
-          children: [
-            { label: 'Categories', key: '/' },
-            { label: 'Manage', key: '/manage' },
-          ],
+          key: '/categories'
         },
       ],
     },
@@ -90,7 +84,7 @@ export default function AppLayout({children}: {children: ReactNode}) {
     )
     .map((item) => item.key || '');
 
-  const findBreadcrumbTrail = (
+  /*const findBreadcrumbTrail = (
     key: string | undefined,
     itemsConfig: MenuItemConfig[],
     trail: MenuItemConfig[] = []
@@ -111,9 +105,9 @@ export default function AppLayout({children}: {children: ReactNode}) {
     }
 
     return [];
-  };
+  };*/
 
-  const breadcrumbTrail = findBreadcrumbTrail(selectedKey, menuItemsConfig);
+  //const breadcrumbTrail = findBreadcrumbTrail(selectedKey, menuItemsConfig);
 
   const navigateBack = () => navigate(-1);
 
@@ -141,7 +135,7 @@ export default function AppLayout({children}: {children: ReactNode}) {
       <Layout>
         <div className={`m-4 py-4 px-2 bg-white rounded-lg flex items-center justify-start gap-4`}>
           <Button icon={<ArrowLeftOutlined />} type='text' onClick={navigateBack}>Back</Button>
-          <Breadcrumb>
+          {/*<Breadcrumb>
             {breadcrumbTrail.map((item) => {
               return (
                 <Breadcrumb.Item key={item.key}>
@@ -149,7 +143,7 @@ export default function AppLayout({children}: {children: ReactNode}) {
                 </Breadcrumb.Item>
               );
             })}
-          </Breadcrumb>
+          </Breadcrumb>*/}
         </div>
         <Content className={`p-6 mx-4 mb-4 bg-white rounded-lg overflow-y-auto`}>
           {children}

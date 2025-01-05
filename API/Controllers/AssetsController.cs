@@ -20,6 +20,16 @@ public class AssetsController(IMediator mediator) : BaseApiController
         return Ok(result.Value);
     }
     
+    [HttpPut("{assetId}")]
+    public async Task<IActionResult> UpdateAsset(string assetId, [FromBody] NewAssetDto dto)
+    {
+        var command = new UpdateAssetCommand(assetId, dto);
+        var result = await mediator.Send(command);
+        if (result.IsFailed) return BadRequest(result.Errors);
+
+        return Ok(result.Value);
+    }
+    
     [HttpGet]
     [Authorize]
     public async Task<IActionResult> GetAssets([FromQuery]GetAssetsParams pageParams)
@@ -30,6 +40,17 @@ public class AssetsController(IMediator mediator) : BaseApiController
         
         Response.AddPaginationHeaders(result.Value);
         return Ok(result.Value.Items);
+    }
+    
+    [HttpGet("{assetId}")]
+    [Authorize]
+    public async Task<IActionResult> GetAsset(string assetId)
+    {
+        var command = new GetAssetCommand(assetId);
+        var result = await mediator.Send(command);
+        if (result.IsFailed) return BadRequest(result.Errors);
+        
+        return Ok(result.Value);
     }
 
     [HttpPost("Categories")]

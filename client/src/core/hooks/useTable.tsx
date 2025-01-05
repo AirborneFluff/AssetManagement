@@ -1,5 +1,5 @@
-import { Key, ReactElement, useRef, useState } from 'react';
-import { Button, Input, InputRef, Space, Table, TableColumnType, TableProps } from 'antd';
+import { Key, useRef, useState } from 'react';
+import { Input, InputRef, Space, Button, TableColumnType, TableProps } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import { flattenTableFilters } from '../helpers/convertFilterArray.ts';
 import { BaseEntity } from '../data/entities/base-entity.ts';
@@ -12,11 +12,18 @@ export interface BaseTableParams {
   sortField?: string | undefined;
 }
 
-export type UseTableResult<T extends BaseEntity> = (columns: SearchableColumnProps<T>) => ReactElement;
-
 export type SearchableColumnProps<T> = (TableColumnType<T> & {
   showSearch?: boolean;
 })[];
+
+export interface UseTableReturn<T> {
+  columns: TableColumnType<T>[];
+  dataSource: T[];
+  loading: boolean;
+  pagination: TableProps<T>['pagination'];
+  onTableChange: TableProps<T>['onChange'];
+  rowKey: (item: T) => string;
+}
 
 export default function useTable<T extends BaseEntity>(
   useQuery: (
@@ -26,27 +33,27 @@ export default function useTable<T extends BaseEntity>(
     isFetching: boolean;
     isError: boolean;
   }
-): UseTableResult<T> {
+): (columns: SearchableColumnProps<T>) => UseTableReturn<T> {
   const searchInput = useRef<InputRef>(null);
   const initialParams: BaseTableParams = {
     pageNumber: 1,
-    pageSize: 10
+    pageSize: 10,
   };
 
   const [params, setParams] = useState<Record<string, Key>>({
-    ...initialParams
+    ...initialParams,
   });
 
-  const {data, isFetching} = useQuery(params);
+  const { data, isFetching } = useQuery(params);
 
   const handleTableChange: TableProps<T>['onChange'] = (pagination, filters, sorter) => {
     const flatFilters = {
       pageNumber: pagination.current ?? 1,
       pageSize: pagination.pageSize ?? 10,
       sortOrder: Array.isArray(sorter) ? undefined : (sorter.order as string),
-      sortField: Array.isArray(sorter) ? undefined : (convertCamelToDot(sorter.columnKey as string)),
-      ...flattenTableFilters(filters)
-    }
+      sortField: Array.isArray(sorter) ? undefined : convertCamelToDot(sorter.columnKey as string),
+      ...flattenTableFilters(filters),
+    };
     setParams(flatFilters as Record<string, Key>);
   };
 
@@ -100,30 +107,27 @@ export default function useTable<T extends BaseEntity>(
     },
   });
 
-  return (columns: SearchableColumnProps<T>): ReactElement => {
-    const enhancedColumns = columns.map((column) => {
-      return column.showSearch
+  return (columns: SearchableColumnProps<T>): UseTableReturn<T> => {
+    const enhancedColumns = columns.map((column) =>
+      column.showSearch
         ? {
           ...column,
           ...getColumnSearchProps(),
         }
-        : column;
-    });
+        : column
+    );
 
-    return (
-      <Table<T>
-        loading={isFetching}
-        dataSource={data?.items || []}
-        rowKey={(item: T) => item.id}
-        onChange={handleTableChange}
-        pagination={{
-          current: data?.pagination?.currentPage || 1,
-          pageSize: data?.pagination?.pageSize || 10,
-          total: data?.pagination?.totalCount || 0,
-        }}
-        columns={enhancedColumns as TableProps<T>['columns']}
-        bordered
-      />
-    )
+    return {
+      columns: enhancedColumns,
+      dataSource: data?.items || [],
+      loading: isFetching,
+      pagination: {
+        current: data?.pagination?.currentPage || 1,
+        pageSize: data?.pagination?.pageSize || 10,
+        total: data?.pagination?.totalCount || 0,
+      },
+      onTableChange: handleTableChange,
+      rowKey: (item) => item.id
+    };
   };
 }
