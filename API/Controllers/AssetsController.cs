@@ -63,6 +63,28 @@ public class AssetsController(IMediator mediator) : BaseApiController
 
         return Ok(result.Value);
     }
+
+    [HttpGet("Categories/{categoryId}")]
+    [Authorize]
+    public async Task<IActionResult> GetCategory(string categoryId)
+    {
+        var command = new GetAssetCategoryCommand(categoryId);
+        var result = await mediator.Send(command);
+        if (result.IsFailed) return BadRequest(result.Errors);
+
+        return Ok(result.Value);
+    }
+
+    [HttpPut("Categories/{categoryId}")]
+    [Authorize]
+    public async Task<IActionResult> UpdateCategory(string categoryId, [FromBody] NewAssetCategoryDto dto)
+    {
+        var command = new UpdateAssetCategoryCommand(categoryId, dto);
+        var result = await mediator.Send(command);
+        if (result.IsFailed) return BadRequest(result.Errors);
+
+        return Ok(result.Value);
+    }
     
     [HttpGet("Categories")]
     [Authorize]

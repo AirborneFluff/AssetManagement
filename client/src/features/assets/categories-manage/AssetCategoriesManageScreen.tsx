@@ -1,28 +1,28 @@
-import { useCreateAssetCategoryMutation } from '../../../core/data/services/api/asset-api.ts';
+import {
+  useCreateAssetCategoryMutation,
+  useUpdateAssetCategoryMutation
+} from '../../../core/data/services/api/asset-api.ts';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import AssetCategoryManageForm from './AssetCategoryManageForm.tsx';
-import { AssetCategoryForm } from '../../../core/data/entities/asset/asset-category.ts';
+import { AssetCategory, AssetCategoryForm } from '../../../core/data/entities/asset/asset-category.ts';
+import { useCombinedAssetMutations } from '../../../core/hooks/useCombineFormMutations.ts';
 
 export default function AssetCategoryManageScreen() {
-  const [createCategory, {isSuccess: createSuccess}] = useCreateAssetCategoryMutation();
+  const {isLoading, onSubmit, isSuccess} =
+    useCombinedAssetMutations<AssetCategoryForm, AssetCategory>(useCreateAssetCategoryMutation, useUpdateAssetCategoryMutation);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (createSuccess) {
+    if (isSuccess) {
       navigate(`/app/assets/categories`);
     }
-  }, [createSuccess, navigate]);
-
-  const handleOnFormSubmit = (data: AssetCategoryForm) => {
-    if (data.id) {
-      return;
-    }
-
-    createCategory(data);
-  }
+  }, [isSuccess, navigate]);
 
   return (
-    <AssetCategoryManageForm onSubmit={handleOnFormSubmit} />
+    <AssetCategoryManageForm
+      isLoading={isLoading}
+      onSubmit={onSubmit}
+    />
   );
 }

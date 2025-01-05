@@ -1,13 +1,21 @@
 import { useGetAssetCategoriesQuery } from '../../../core/data/services/api/asset-api.ts';
-import useTable, { SearchableColumnProps } from '../../../core/hooks/useTable.tsx';
+import useTable from '../../../core/hooks/useTable.tsx';
 import { ListScreenLayout } from '../../shared/layouts/ListScreenLayout.tsx';
-import { AssetCategory } from '../../../core/data/entities/asset/asset-category.ts';
+import { Button, Table } from 'antd';
+import { useNavigate } from 'react-router-dom';
 
 
 export default function AssetCategoriesListScreen() {
-  const renderTable = useTable<AssetCategory>(useGetAssetCategoriesQuery);
+  const navigate = useNavigate();
 
-  const columns: SearchableColumnProps<AssetCategory> = [
+  const {
+    columns,
+    dataSource,
+    loading,
+    pagination,
+    onTableChange,
+    rowKey
+  } = useTable(useGetAssetCategoriesQuery)([
     {
       title: 'Name',
       dataIndex: 'name',
@@ -15,12 +23,34 @@ export default function AssetCategoriesListScreen() {
       sorter: true,
       sortDirections: ['descend', 'ascend'],
       showSearch: true
-    }
-  ]
+    },
+    {
+      title: 'Action',
+      key: 'operation',
+      fixed: 'right',
+      width: 100,
+      render: (asset) => (
+        <Button
+          type='text'
+          onClick={() => navigate(`manage/${asset.id}`)}
+        >
+          Edit
+        </Button>
+      )
+    },
+  ]);
 
   return (
-    <ListScreenLayout
-      table={renderTable(columns)}
-    />
+    <ListScreenLayout>
+      <Table
+        columns={columns}
+        dataSource={dataSource}
+        loading={loading}
+        pagination={pagination}
+        onChange={onTableChange}
+        rowKey={rowKey}
+        bordered
+      />
+    </ListScreenLayout>
   )
 }

@@ -12,6 +12,7 @@ export default function AssetsRoutes() {
       <Route path="manage/" element={<AssetManageScreen />} />
       <Route path="categories" element={<AssetCategoriesListScreen />} />
       <Route path="categories/manage" element={<AssetCategoryManageScreen />} />
+      <Route path="categories/manage/:categoryId" element={<AssetCategoryManageScreen />} />
     </Routes>
   );
 }

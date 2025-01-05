@@ -3,14 +3,29 @@ import {
   Form,
   Input
 } from 'antd';
-import { AssetCategoryForm } from '../../../core/data/entities/asset/asset-category.ts';
+import { AssetCategory, AssetCategoryForm } from '../../../core/data/entities/asset/asset-category.ts';
+import { FormProps } from '../../../core/data/models/forms/FormProps.ts';
+import { useParams } from 'react-router-dom';
+import {
+  useLazyGetAssetCategoryQuery
+} from '../../../core/data/services/api/asset-api.ts';
+import { useCallback } from 'react';
+import { useManageForm } from '../../../core/hooks/useManageForm.ts';
 
-interface FormProps {
-  onSubmit: (data: AssetCategoryForm) => void;
-}
+export default function AssetCategoryManageForm({onSubmit, isLoading}: FormProps<AssetCategoryForm>) {
+  const { categoryId } = useParams<{ categoryId: string }>();
 
-export default function AssetCategoryManageForm({onSubmit}: FormProps) {
   const [form] = Form.useForm<AssetCategoryForm>();
+  const handleSuccess = useCallback((asset: AssetCategory) => {
+    form.setFieldValue('id', asset.id);
+    form.setFieldValue('name', asset.name);
+  }, [form]);
+
+  const { formLoading } = useManageForm<AssetCategory>({
+    id: categoryId,
+    queryHook: useLazyGetAssetCategoryQuery,
+    onSuccess: handleSuccess
+  });
 
   return (
     <Form<AssetCategoryForm>
@@ -19,8 +34,11 @@ export default function AssetCategoryManageForm({onSubmit}: FormProps) {
       layout="vertical"
       style={{ maxWidth: 600 }}
       form={form}
+      disabled={formLoading || isLoading}
       onFinish={onSubmit}
     >
+      <Form.Item hidden name='id' />
+
       <Form.Item
         rules={[{ required: true }]}
         label="Name"
