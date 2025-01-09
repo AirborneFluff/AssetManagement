@@ -16,7 +16,11 @@ public class DataContext(DbContextOptions<DataContext> options, IUserContext use
 {
     public DbSet<AppTenant> Tenants { get; set; }
     public DbSet<Asset> Assets { get; set; }
+    public DbSet<AssetTag> AssetTags { get; set; }
     public DbSet<AssetCategory> AssetCategories { get; set; }
+    public DbSet<AssetSupplier> AssetSuppliers { get; set; }
+    public DbSet<AssetSupplySource> AssetSupplySources { get; set; }
+    public DbSet<AssetSupplySourcePrice> AssetSupplySourcePrices { get; set; }
     
     protected IUserContext userContext { get; set; } = userContext;
 

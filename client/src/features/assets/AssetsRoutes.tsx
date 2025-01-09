@@ -3,6 +3,8 @@ import AssetsListScreen from "./assets-list/AssetsListScreen.tsx";
 import AssetManageScreen from "./assets-manage/AssetsManageScreen.tsx";
 import AssetCategoryManageScreen from './categories-manage/AssetCategoriesManageScreen.tsx';
 import AssetCategoriesListScreen from './categories-list/AssetCategoriesListScreen.tsx';
+import AssetSuppliersListScreen from './suppliers-list/AssetSuppliersListScreen.tsx';
+import AssetSuppliersManageScreen from './suppliers-manage/AssetSuppliersManageScreen.tsx';
 
 export default function AssetsRoutes() {
   return (
@@ -13,6 +15,9 @@ export default function AssetsRoutes() {
       <Route path="categories" element={<AssetCategoriesListScreen />} />
       <Route path="categories/manage" element={<AssetCategoryManageScreen />} />
       <Route path="categories/manage/:categoryId" element={<AssetCategoryManageScreen />} />
+      <Route path="suppliers" element={<AssetSuppliersListScreen />} />
+      <Route path="suppliers/manage" element={<AssetSuppliersManageScreen />} />
+      <Route path="suppliers/manage/:supplierId" element={<AssetSuppliersManageScreen />} />
     </Routes>
   );
 }

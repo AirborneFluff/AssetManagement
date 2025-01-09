@@ -6,6 +6,7 @@ import {
 } from '../../models/paged-response.ts';
 import { Key } from 'react';
 import { AssetCategory, AssetCategoryForm } from '../../entities/asset/asset-category.ts';
+import { AssetSupplier, AssetSupplierForm } from '../../entities/asset/asset-supplier.ts';
 
 export const assetApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -61,6 +62,32 @@ export const assetApi = baseApi.injectEndpoints({
         url: `/assets/categories/${categoryId}`
       })
     }),
+    getAssetSuppliers: builder.query<PagedResponse<AssetSupplier>, Record<string, Key>>({
+      query: (params) => ({
+        url: '/assets/suppliers',
+        params: params
+      }),
+      transformResponse: transformPagedResponse
+    }),
+    getAssetSupplier: builder.query<AssetSupplier, string>({
+      query: (supplierId) => ({
+        url: `/assets/suppliers/${supplierId}`
+      })
+    }),
+    createAssetSupplier: builder.mutation<AssetSupplier, AssetSupplierForm>({
+      query: (dto) => ({
+        url: '/assets/suppliers',
+        method: 'POST',
+        body: dto
+      }),
+    }),
+    updateAssetSupplier: builder.mutation<AssetSupplier, AssetSupplierForm>({
+      query: (dto) => ({
+        url: `/assets/suppliers/${dto.id}`,
+        method: 'PUT',
+        body: dto
+      }),
+    }),
   }),
   overrideExisting: false,
 });
@@ -73,5 +100,9 @@ export const {
   useGetAssetsQuery,
   useLazyGetAssetQuery,
   useLazyGetAssetCategoryQuery,
-  useGetAssetCategoriesQuery
+  useGetAssetCategoriesQuery,
+  useGetAssetSuppliersQuery,
+  useLazyGetAssetSupplierQuery,
+  useCreateAssetSupplierMutation,
+  useUpdateAssetSupplierMutation
 } = assetApi;

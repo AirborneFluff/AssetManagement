@@ -9,4 +9,6 @@ public class Asset : BaseEntity
 
     public required string CategoryId { get; set; }
     public AssetCategory? Category { get; set; }
+
+    public List<AssetSupplySource> SupplySources { get; set; } = [];
 }

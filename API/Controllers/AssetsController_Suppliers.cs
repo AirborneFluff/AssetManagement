@@ -1,6 +1,8 @@
 ﻿using API.Domain.Asset.Dto;
 using API.Domain.Asset.Features;
+using API.Domain.Asset.Features.Suppliers;
 using API.Domain.Asset.Params;
+using API.Domain.Shared.Params;
 using API.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -8,33 +10,32 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
 
-[Authorize]
-public partial class AssetsController(IMediator mediator) : BaseApiController
+public partial class AssetsController
 {
-    [HttpPost]
-    public async Task<IActionResult> CreateAsset([FromBody] NewAssetDto dto)
+    [HttpPost("Suppliers")]
+    public async Task<IActionResult> CreateSupplier([FromBody] NewAssetSupplierDto dto)
     {
-        var command = new CreateAssetCommand(dto);
+        var command = new CreateSupplierCommand(dto);
         var result = await mediator.Send(command);
         if (result.IsFailed) return BadRequest(result.Errors);
 
         return Ok(result.Value);
     }
     
-    [HttpPut("{assetId}")]
-    public async Task<IActionResult> UpdateAsset(string assetId, [FromBody] NewAssetDto dto)
+    [HttpPut("Suppliers/{supplierId}")]
+    public async Task<IActionResult> UpdateSupplier(string supplierId, [FromBody] NewAssetSupplierDto dto)
     {
-        var command = new UpdateAssetCommand(assetId, dto);
+        var command = new UpdateSupplierCommand(supplierId, dto);
         var result = await mediator.Send(command);
         if (result.IsFailed) return BadRequest(result.Errors);
 
         return Ok(result.Value);
     }
     
-    [HttpGet]
-    public async Task<IActionResult> GetAssets([FromQuery]GetAssetsParams pageParams)
+    [HttpGet("Suppliers")]
+    public async Task<IActionResult> GetSuppliers([FromQuery]SortableParams pageParams)
     {
-        var command = new GetAssetsCommand(pageParams);
+        var command = new GetSuppliersCommand(pageParams);
         var result = await mediator.Send(command);
         if (result.IsFailed) return BadRequest(result.Errors);
         
@@ -42,10 +43,10 @@ public partial class AssetsController(IMediator mediator) : BaseApiController
         return Ok(result.Value.Items);
     }
     
-    [HttpGet("{assetId}")]
-    public async Task<IActionResult> GetAsset(string assetId)
+    [HttpGet("Suppliers/{supplierId}")]
+    public async Task<IActionResult> GetSupplier(string supplierId)
     {
-        var command = new GetAssetCommand(assetId);
+        var command = new GetSupplierCommand(supplierId);
         var result = await mediator.Send(command);
         if (result.IsFailed) return BadRequest(result.Errors);
         
