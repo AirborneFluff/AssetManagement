@@ -1,4 +1,5 @@
 using API.Data;
+using API.Data.Interfaces;
 using API.Domain.Authentication;
 using API.Services.CurrentUser;
 using API.Services.Startup;
@@ -62,12 +63,12 @@ public static class WebApplicationBuilderExtensions
 
     private static void AddCustomServices(this WebApplicationBuilder builder)
     {
-        builder.Services.AddScoped<UnitOfWork>();
+        builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
         builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
         builder.Services.AddTransient<IStartupService, SeedUserRolesService>();
         builder.Services.AddTransient<IStartupService, CreateSuperUserService>();
 
         builder.Services.AddHttpContextAccessor();
-        builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+        builder.Services.AddScoped<IUserContext, UserContext>();
     }
 }

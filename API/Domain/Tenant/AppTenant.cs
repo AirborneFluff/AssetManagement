@@ -4,7 +4,7 @@ using API.Domain.Shared;
 
 namespace API.Domain.Tenant;
 
-public class AppTenant : BaseEntity
+public class AppTenant : AuditEntity
 {
     [MaxLength(128)]
     public required string Name { get; set; }

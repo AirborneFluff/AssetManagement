@@ -1,4 +1,4 @@
-using API.Data;
+using API.Data.Interfaces;
 using API.Domain.Authentication.Dtos;
 using AutoMapper;
 using FluentResults;
@@ -10,7 +10,8 @@ namespace API.Domain.Authentication.Features;
 
 public record CreateUserCommand(NewAppUserDto AppUserDto, string TenantId) : IRequest<Result<AppUserDto>>;
 
-public class CreateUserCommandHandler(UnitOfWork unitOfWork, 
+public class CreateUserCommandHandler(
+    IUnitOfWork unitOfWork, 
     UserManager<AppUser> userManager, 
     RoleManager<IdentityRole> roleManager,
     IMapper mapper) 

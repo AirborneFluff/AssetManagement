@@ -1,0 +1,56 @@
+﻿###
+# Login with email: string1
+POST https://localhost:5001/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "string1",
+  "password": "1234"
+}
+
+> {%
+    client.global.set("authCookie", response.headers.valueOf('set-cookie'));
+%}
+
+###
+
+# Get assets using the token from string1's login
+GET https://localhost:5001/api/assets/
+Cookie: {{authCookie}}
+
+> {%
+    if (!Array.isArray(response.body)) {
+        throw new Error("Response is not an array!");
+    }
+    if (response.body.length !== 1) {
+        throw new Error("Expected array length to be 1 but got " + response.body.length);
+    }
+%}
+
+###
+# Login with email: string2
+POST https://localhost:5001/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "string",
+  "password": "1234"
+}
+
+> {%
+    client.global.set("authCookie1", response.headers.valueOf('set-cookie'));
+%}
+
+###
+# Get assets using the token from string2's login
+GET https://localhost:5001/api/assets/
+Cookie: {{authCookie1}}
+
+> {%
+    if (!Array.isArray(response.body)) {
+        throw new Error("Response is not an array!");
+    }
+    if (response.body.length !== 0) {
+        throw new Error("Expected array length to be 0 but got " + response.body.length);
+    }
+%}

@@ -1,73 +1,76 @@
-import {Table, Tag} from "antd";
-import React from "react";
-
-const { Column } = Table;
-
-interface DataType {
-  key: React.Key;
-  description: string;
-  serialNumber: string;
-  location: string;
-  category: string;
-  tags: string[];
-}
+import { Button, Table, Tag } from 'antd';
+import { useGetAssetsQuery } from '../../../core/data/services/api/asset-api.ts';
+import { Asset, AssetTag } from '../../../core/data/entities/asset/asset.ts';
+import useTable from '../../../core/hooks/useTable.tsx';
+import { ListScreenLayout } from '../../shared/layouts/ListScreenLayout.tsx';
+import { useNavigate } from 'react-router-dom';
 
 export default function AssetsListScreen() {
-  const dataSource: DataType[] = [
+  const navigate = useNavigate();
+
+  const {
+    columns,
+    dataSource,
+    loading,
+    pagination,
+    onTableChange,
+    rowKey
+  } = useTable(useGetAssetsQuery)([
     {
-      key: '1',
-      description: 'Item description test',
-      serialNumber: '1234',
-      location: 'Office',
-      category: 'Electronics',
-      tags: ['tag1', 'tag2']
+      title: 'Description',
+      dataIndex: 'description',
+      key: 'description',
+      sorter: true,
+      sortDirections: ['descend', 'ascend'],
+      showSearch: true
     },
     {
-      key: '2',
-      description: 'Second item description',
-      serialNumber: '5678',
-      location: 'Warehouse',
-      category: 'Furniture',
-      tags: ['tag4', 'tag2']
+      title: 'Category',
+      render: (record: Asset) => record.category?.name || 'N/A',
+      key: 'categoryName',
+      sorter: true,
+      sortDirections: ['descend', 'ascend'],
+      showSearch: true
     },
     {
-      key: '3',
-      description: 'Third item description',
-      serialNumber: '9101',
-      location: 'Lab',
-      category: 'Lab Equipment',
-      tags: ['tag1', 'tag3']
-    }
-  ];
+      title: 'Tags',
+      dataIndex: 'tags',
+      key: 'tags',
+      render: (tags: AssetTag[]) => tags.map((tag) => {
+        return (
+          <Tag color='geekblue' key={tag.id}>
+            {tag.tag}
+          </Tag>
+        )
+      })
+    },
+    {
+      title: 'Action',
+      key: 'operation',
+      fixed: 'right',
+      width: 100,
+      render: (asset) => (
+        <Button
+          type='text'
+          onClick={() => navigate(`manage/${asset.id}`)}
+        >
+          Edit
+        </Button>
+      )
+    },
+  ]);
 
   return (
-    <div className={`h-full`}>
-      <Table<DataType> dataSource={dataSource} bordered>
-        <Column title="Description" dataIndex="description" key="description" />
-        <Column title="Serial Number" dataIndex="serialNumber" key="serialNumber" />
-        <Column title="Location" dataIndex="location" key="location" />
-        <Column title="Category" dataIndex="category" key="category" />
-        <Column
-          title="Tags"
-          dataIndex="tags"
-          key="tags"
-          render={(tags: string[]) => (
-            <>
-              {tags.map((tag) => {
-                let color = tag.length > 5 ? 'geekblue' : 'green';
-                if (tag === 'loser') {
-                  color = 'volcano';
-                }
-                return (
-                  <Tag color={color} key={tag}>
-                    {tag.toUpperCase()}
-                  </Tag>
-                );
-              })}
-            </>
-          )}
-        />
-      </Table>
-    </div>
-  )
+    <ListScreenLayout>
+      <Table
+        columns={columns}
+        dataSource={dataSource}
+        loading={loading}
+        pagination={pagination}
+        onChange={onTableChange}
+        rowKey={rowKey}
+        bordered
+      />
+    </ListScreenLayout>
+  );
 }

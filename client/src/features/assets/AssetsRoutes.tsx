@@ -1,13 +1,18 @@
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import AssetsListScreen from "./assets-list/AssetsListScreen.tsx";
 import AssetManageScreen from "./assets-manage/AssetsManageScreen.tsx";
+import AssetCategoryManageScreen from './categories-manage/AssetCategoriesManageScreen.tsx';
+import AssetCategoriesListScreen from './categories-list/AssetCategoriesListScreen.tsx';
 
 export default function AssetsRoutes() {
   return (
     <Routes>
-      <Route path="/" element={<Navigate to="list" />} />
-      <Route path="list" element={<AssetsListScreen />} />
-      <Route path="manage" element={<AssetManageScreen />} />
+      <Route path="/" element={<AssetsListScreen />} />
+      <Route path="manage/:assetId" element={<AssetManageScreen />} />
+      <Route path="manage/" element={<AssetManageScreen />} />
+      <Route path="categories" element={<AssetCategoriesListScreen />} />
+      <Route path="categories/manage" element={<AssetCategoryManageScreen />} />
+      <Route path="categories/manage/:categoryId" element={<AssetCategoryManageScreen />} />
     </Routes>
   );
 }
