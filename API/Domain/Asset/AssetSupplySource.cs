@@ -4,6 +4,9 @@ namespace API.Domain.Asset;
 
 public class AssetSupplySource : BaseEntity
 {
+    public required string AssetId { get; set; }
+    public Asset? Asset { get; set; }
+    
     public required string SupplierId { get; set; }
     public AssetSupplier? Supplier { get; set; }
 

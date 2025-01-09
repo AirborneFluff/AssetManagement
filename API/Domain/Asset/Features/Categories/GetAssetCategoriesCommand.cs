@@ -1,5 +1,5 @@
 ﻿using API.Data.Interfaces;
-using API.Domain.Asset.Dto;
+using API.Domain.Asset.Dto.Categories;
 using API.Domain.Asset.Params;
 using API.Domain.Shared.Helpers;
 using API.Extensions;
@@ -8,7 +8,7 @@ using FluentResults;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace API.Domain.Asset.Features;
+namespace API.Domain.Asset.Features.Categories;
 
 public record GetAssetCategoriesCommand(GetAssetCategoriesParams PageParams) : IRequest<Result<PagedList<AssetCategoryDto>>>;
 

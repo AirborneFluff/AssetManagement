@@ -1,9 +1,7 @@
-﻿using API.Domain.Asset.Dto;
-using API.Domain.Asset.Features;
+﻿using API.Domain.Asset.Dto.Categories;
+using API.Domain.Asset.Features.Categories;
 using API.Domain.Asset.Params;
 using API.Extensions;
-using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;

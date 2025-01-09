@@ -1,5 +1,5 @@
 ﻿using API.Data.Interfaces;
-using API.Domain.Asset.Dto;
+using API.Domain.Asset.Dto.Suppliers;
 using API.Domain.Shared.Helpers;
 using API.Domain.Shared.Params;
 using API.Extensions;

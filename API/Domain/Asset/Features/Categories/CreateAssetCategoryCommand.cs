@@ -1,10 +1,10 @@
 ﻿using API.Data.Interfaces;
-using API.Domain.Asset.Dto;
+using API.Domain.Asset.Dto.Categories;
 using AutoMapper;
 using FluentResults;
 using MediatR;
 
-namespace API.Domain.Asset.Features;
+namespace API.Domain.Asset.Features.Categories;
 
 public record CreateAssetCategoryCommand(NewAssetCategoryDto Category) : IRequest<Result<AssetCategoryDto>>;
 

@@ -1,5 +1,6 @@
 ﻿using API.Data.Interfaces;
 using API.Domain.Asset.Dto;
+using API.Domain.Asset.Dto.Suppliers;
 using AutoMapper;
 using FluentResults;
 using MediatR;

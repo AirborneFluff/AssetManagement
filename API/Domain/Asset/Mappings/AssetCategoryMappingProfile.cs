@@ -1,4 +1,4 @@
-﻿using API.Domain.Asset.Dto;
+﻿using API.Domain.Asset.Dto.Categories;
 using AutoMapper;
 
 namespace API.Domain.Asset.Mappings;

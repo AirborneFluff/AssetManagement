@@ -1,4 +1,4 @@
-﻿namespace API.Domain.Asset.Dto;
+﻿namespace API.Domain.Asset.Dto.Categories;
 
 public class AssetCategoryDto
 {

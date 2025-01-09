@@ -98,6 +98,7 @@ export const {
   useUpdateAssetMutation,
   useUpdateAssetCategoryMutation,
   useGetAssetsQuery,
+  useGetAssetQuery,
   useLazyGetAssetQuery,
   useLazyGetAssetCategoryQuery,
   useGetAssetCategoriesQuery,

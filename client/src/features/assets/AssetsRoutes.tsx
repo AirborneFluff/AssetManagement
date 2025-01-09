@@ -5,11 +5,13 @@ import AssetCategoryManageScreen from './categories-manage/AssetCategoriesManage
 import AssetCategoriesListScreen from './categories-list/AssetCategoriesListScreen.tsx';
 import AssetSuppliersListScreen from './suppliers-list/AssetSuppliersListScreen.tsx';
 import AssetSuppliersManageScreen from './suppliers-manage/AssetSuppliersManageScreen.tsx';
+import AssetPreviewScreen from './asset-preview/AssetPreviewScreen.tsx';
 
 export default function AssetsRoutes() {
   return (
     <Routes>
       <Route path="/" element={<AssetsListScreen />} />
+      <Route path="/:assetId" element={<AssetPreviewScreen />} />
       <Route path="manage/:assetId" element={<AssetManageScreen />} />
       <Route path="manage/" element={<AssetManageScreen />} />
       <Route path="categories" element={<AssetCategoriesListScreen />} />

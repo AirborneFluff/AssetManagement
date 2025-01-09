@@ -70,6 +70,11 @@ export default function AssetsListScreen() {
         onChange={onTableChange}
         rowKey={rowKey}
         bordered
+        onRow={(record) => {
+          return {
+            onClick: () => navigate(record.id),
+          };
+        }}
       />
     </ListScreenLayout>
   );

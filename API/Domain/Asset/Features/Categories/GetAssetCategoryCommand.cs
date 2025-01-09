@@ -1,11 +1,11 @@
 ﻿using API.Data.Interfaces;
-using API.Domain.Asset.Dto;
+using API.Domain.Asset.Dto.Categories;
 using AutoMapper;
 using FluentResults;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace API.Domain.Asset.Features;
+namespace API.Domain.Asset.Features.Categories;
 
 public record GetAssetCategoryCommand(string CategoryId) : IRequest<Result<AssetCategoryDto>>;
 
