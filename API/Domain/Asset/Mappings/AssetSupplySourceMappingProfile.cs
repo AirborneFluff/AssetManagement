@@ -9,5 +9,8 @@ public class AssetSupplySourceMappingProfile : Profile
     {
         CreateMap<NewAssetSupplySourceDto, AssetSupplySource>();
         CreateMap<AssetSupplySource, AssetSupplySourceDto>();
+
+        CreateMap<NewAssetSupplySourcePriceDto, AssetSupplySourcePrice>();
+        CreateMap<AssetSupplySourcePrice, AssetSupplySourcePriceDto>();
     }
 }
