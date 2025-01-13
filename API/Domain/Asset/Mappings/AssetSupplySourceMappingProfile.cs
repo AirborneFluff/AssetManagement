@@ -8,9 +8,7 @@ public class AssetSupplySourceMappingProfile : Profile
     public AssetSupplySourceMappingProfile()
     {
         CreateMap<NewAssetSupplySourceDto, AssetSupplySource>();
-        CreateMap<AssetSupplySource, AssetSupplySourceDto>();
-
-        CreateMap<NewAssetSupplySourcePriceDto, AssetSupplySourcePrice>();
-        CreateMap<AssetSupplySourcePrice, AssetSupplySourcePriceDto>();
+        CreateMap<AssetSupplySource, AssetSupplySourceDto>()
+            .ForMember(dest => dest.SupplierName, opt => opt.MapFrom(src => src.Supplier!.Name));
     }
 }

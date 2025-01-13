@@ -20,6 +20,7 @@ public class GetAssetHandler(
             .Include(a => a.Tags)
             .Include(a => a.Category)
             .Include(a => a.SupplySources)
+            .ThenInclude(s => s.Supplier)
             .FirstOrDefaultAsync(asset => asset.Id == request.AssetId, cancellationToken: cancellationToken);
         
         if (result is null) return Result.Fail("Asset not found");

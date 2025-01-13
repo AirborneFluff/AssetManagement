@@ -7,6 +7,7 @@ import {
 import { Key } from 'react';
 import { AssetCategory, AssetCategoryForm } from '../../entities/asset/asset-category.ts';
 import { AssetSupplier, AssetSupplierForm } from '../../entities/asset/asset-supplier.ts';
+import { AssetSupplySource, AssetSupplySourceForm } from '../../entities/asset/asset-supply-source.ts';
 
 export const assetApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -88,6 +89,18 @@ export const assetApi = baseApi.injectEndpoints({
         body: dto
       }),
     }),
+    updateAssetSupplySource: builder.mutation<AssetSupplySource, AssetSupplySourceForm>({
+      query: (dto) => ({
+        url: `/assets/${dto.assetId}/supplySources/${dto.id}`,
+        method: 'PUT',
+        body: dto
+      }),
+    }),
+    getAssetSupplierOptions: builder.query<Record<string, string>, void>({
+      query: () => ({
+        url: `/assets/suppliers/options`
+      })
+    }),
   }),
   overrideExisting: false,
 });
@@ -105,5 +118,7 @@ export const {
   useGetAssetSuppliersQuery,
   useLazyGetAssetSupplierQuery,
   useCreateAssetSupplierMutation,
-  useUpdateAssetSupplierMutation
+  useUpdateAssetSupplierMutation,
+  useUpdateAssetSupplySourceMutation,
+  useGetAssetSupplierOptionsQuery
 } = assetApi;

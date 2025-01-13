@@ -13,5 +13,5 @@ public class AssetSupplySource : BaseEntity
     public required string SupplierReference { get; set; }
     public string? QuantityUnit { get; set; }
 
-    public List<AssetSupplySourcePrice> Prices { get; set; } = [];
+    public Dictionary<float, double> Prices { get; set; } = [];
 }

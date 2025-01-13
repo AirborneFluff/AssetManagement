@@ -39,6 +39,16 @@ public partial class AssetsController
         return Ok(result.Value.Items);
     }
     
+    [HttpGet("Suppliers/options")]
+    public async Task<IActionResult> GetSupplierOptions()
+    {
+        var command = new GetSupplierOptionsCommand();
+        var result = await mediator.Send(command);
+        if (result.IsFailed) return BadRequest(result.Errors);
+        
+        return Ok(result.Value);
+    }
+    
     [HttpGet("Suppliers/{supplierId}")]
     public async Task<IActionResult> GetSupplier(string supplierId)
     {

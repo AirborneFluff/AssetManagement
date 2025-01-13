@@ -19,13 +19,11 @@ public partial class AssetsController
         return Ok(result.Value);
     }
     
-    [HttpPost("{assetId}/supplySources/{sourceId}/prices")]
-    [ValidateEntityExists<AssetSupplySource>("sourceId")]
-    public async Task<IActionResult> CreateSupplySourcePrice(
-        string sourceId, 
-        [FromBody] NewAssetSupplySourcePriceDto dto)
+    [HttpPut("{assetId}/supplySources/{supplySourceId}")]
+    [ValidateEntityExists<AssetSupplySource>("supplySourceId")]
+    public async Task<IActionResult> UpdateSupplySource(string supplySourceId, [FromBody] NewAssetSupplySourceDto dto)
     {
-        var command = new CreateSupplySourcePriceCommand(sourceId, dto);
+        var command = new UpdateSupplySourceCommand(supplySourceId, dto);
         var result = await mediator.Send(command);
         if (result.IsFailed) return BadRequest(result.Errors);
 
