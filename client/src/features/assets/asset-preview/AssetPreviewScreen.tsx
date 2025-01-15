@@ -21,14 +21,12 @@ export default function AssetPreviewScreen() {
 
   return (
     <>
-      <Row>
+      <Row gutter={[12, 12]}>
         <Col span={24}>
           <AssetPreviewDescriptions asset={asset} />
         </Col>
-      </Row>
-      <Row>
-        <Col span={24}>
-          <AssetSupplySourceTable asset={asset} onUpdate={handleOnSupplySourceUpdate} />
+        <Col span={24} xl={12}>
+          <AssetSupplySourceTable supplySources={asset?.supplySources} onUpdate={handleOnSupplySourceUpdate} />
         </Col>
       </Row>
     </>

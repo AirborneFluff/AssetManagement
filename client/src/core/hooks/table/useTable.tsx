@@ -1,9 +1,9 @@
 import { Key, useRef, useState } from 'react';
 import { Input, InputRef, Space, Button, TableColumnType, TableProps } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
-import { flattenTableFilters } from '../helpers/convertFilterArray.ts';
-import { BaseEntity } from '../data/entities/base-entity.ts';
-import { PagedResponse } from '../data/models/paged-response.ts';
+import { flattenTableFilters } from '../../helpers/convertFilterArray.ts';
+import { BaseEntity } from '../../data/entities/base-entity.ts';
+import { PagedResponse } from '../../data/models/paged-response.ts';
 
 export interface BaseTableParams {
   pageNumber: number;
