@@ -96,10 +96,18 @@ export const assetApi = baseApi.injectEndpoints({
         body: dto
       }),
     }),
-    getAssetSupplierOptions: builder.query<Record<string, string>, void>({
-      query: () => ({
-        url: `/assets/suppliers/options`
-      })
+    createAssetSupplySource: builder.mutation<AssetSupplySource, AssetSupplySourceForm>({
+      query: (dto) => ({
+        url: `/assets/${dto.assetId}/supplySources`,
+        method: 'POST',
+        body: dto
+      }),
+    }),
+    deleteAssetSupplySource: builder.mutation<AssetSupplySource, { id: string, assetId: string }>({
+      query: (dto) => ({
+        url: `/assets/${dto.assetId}/supplySources/${dto.id}`,
+        method: 'DELETE'
+      }),
     }),
   }),
   overrideExisting: false,
@@ -120,5 +128,6 @@ export const {
   useCreateAssetSupplierMutation,
   useUpdateAssetSupplierMutation,
   useUpdateAssetSupplySourceMutation,
-  useGetAssetSupplierOptionsQuery
+  useCreateAssetSupplySourceMutation,
+  useDeleteAssetSupplySourceMutation
 } = assetApi;

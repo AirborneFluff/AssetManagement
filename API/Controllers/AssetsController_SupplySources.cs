@@ -29,4 +29,15 @@ public partial class AssetsController
 
         return Ok(result.Value);
     }
+    
+    [HttpDelete("{assetId}/supplySources/{supplySourceId}")]
+    [ValidateEntityExists<AssetSupplySource>("supplySourceId")]
+    public async Task<IActionResult> DeleteSupplySource(string supplySourceId)
+    {
+        var command = new DeleteSupplySourceCommand(supplySourceId);
+        var result = await mediator.Send(command);
+        if (result.IsFailed) return BadRequest(result.Errors);
+
+        return Ok(result);
+    }
 }
