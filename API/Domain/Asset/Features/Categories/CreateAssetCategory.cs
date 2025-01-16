@@ -6,13 +6,13 @@ using MediatR;
 
 namespace API.Domain.Asset.Features.Categories;
 
-public record CreateAssetCategory(NewAssetCategoryDto Category) : IRequest<Result<AssetCategoryDto>>;
+public record CreateAssetCategoryCommand(NewAssetCategoryDto Category) : IRequest<Result<AssetCategoryDto>>;
 
 public class CreateAssetCategoryHandler(
     IUnitOfWork unitOfWork,
-    IMapper mapper) : IRequestHandler<CreateAssetCategory, Result<AssetCategoryDto>>
+    IMapper mapper) : IRequestHandler<CreateAssetCategoryCommand, Result<AssetCategoryDto>>
 {
-    public async Task<Result<AssetCategoryDto>> Handle(CreateAssetCategory request, CancellationToken cancellationToken)
+    public async Task<Result<AssetCategoryDto>> Handle(CreateAssetCategoryCommand request, CancellationToken cancellationToken)
     {
         var categoryExists = await unitOfWork.AssetCategoryRepository.AssetCategoryExistsAsync(request.Category.Name);
         if (categoryExists) return Result.Fail("Category already exists");

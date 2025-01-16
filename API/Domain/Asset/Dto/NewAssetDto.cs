@@ -4,5 +4,6 @@ public class NewAssetDto
 {
     public required string Description { get; set; }
     public required string CategoryId { get; set; }
+    public int StockLevel { get; set; }
     public List<string> Tags { get; set; } = [];
 }

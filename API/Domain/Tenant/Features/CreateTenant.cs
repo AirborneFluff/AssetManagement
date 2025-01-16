@@ -7,13 +7,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.Domain.Tenant.Features;
 
-public record CreateTenant(NewTenantDto Tenant) : IRequest<Result<TenantDto>>;
+public record CreateTenantCommand(NewTenantDto Tenant) : IRequest<Result<TenantDto>>;
 
 public class CreateTenantHandler(
     IUnitOfWork unitOfWork, 
-    IMapper mapper) : IRequestHandler<CreateTenant, Result<TenantDto>>
+    IMapper mapper) : IRequestHandler<CreateTenantCommand, Result<TenantDto>>
 {
-    public async Task<Result<TenantDto>> Handle(CreateTenant request, CancellationToken cancellationToken)
+    public async Task<Result<TenantDto>> Handle(CreateTenantCommand request, CancellationToken cancellationToken)
     {
         var tenantNameTaken = await unitOfWork.Context.Tenants
             .AnyAsync(t => t.Name.ToLower() == request.Tenant.Name.ToLower(), cancellationToken);

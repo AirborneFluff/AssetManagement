@@ -7,13 +7,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.Domain.Asset.Features.Suppliers;
 
-public record UpdateSupplier(string SupplierId, NewAssetSupplierDto Supplier) : IRequest<Result<AssetSupplierDto>>;
+public record UpdateSupplierCommand(string SupplierId, NewAssetSupplierDto Supplier) : IRequest<Result<AssetSupplierDto>>;
 
 public class UpdateSupplierHandler(
     IUnitOfWork unitOfWork,
-    IMapper mapper) : IRequestHandler<UpdateSupplier, Result<AssetSupplierDto>>
+    IMapper mapper) : IRequestHandler<UpdateSupplierCommand, Result<AssetSupplierDto>>
 {
-    public async Task<Result<AssetSupplierDto>> Handle(UpdateSupplier request, CancellationToken cancellationToken)
+    public async Task<Result<AssetSupplierDto>> Handle(UpdateSupplierCommand request, CancellationToken cancellationToken)
     {
         var supplier = await unitOfWork.Context.AssetSuppliers
             .FirstOrDefaultAsync(a => a.Id == request.SupplierId, cancellationToken);

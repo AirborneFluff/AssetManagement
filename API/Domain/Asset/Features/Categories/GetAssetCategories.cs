@@ -10,13 +10,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.Domain.Asset.Features.Categories;
 
-public record GetAssetCategories(GetAssetCategoriesParams PageParams) : IRequest<Result<PagedList<AssetCategoryDto>>>;
+public record GetAssetCategoriesCommand(GetAssetCategoriesParams PageParams) : IRequest<Result<PagedList<AssetCategoryDto>>>;
 
 public class GetAssetCategoriesHandler(
     IUnitOfWork unitOfWork,
-    IMapper mapper) : IRequestHandler<GetAssetCategories, Result<PagedList<AssetCategoryDto>>>
+    IMapper mapper) : IRequestHandler<GetAssetCategoriesCommand, Result<PagedList<AssetCategoryDto>>>
 {
-    public async Task<Result<PagedList<AssetCategoryDto>>> Handle(GetAssetCategories request, CancellationToken cancellationToken)
+    public async Task<Result<PagedList<AssetCategoryDto>>> Handle(GetAssetCategoriesCommand request, CancellationToken cancellationToken)
     {
         var query = unitOfWork.Context.AssetCategories
             .AsNoTracking()

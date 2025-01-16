@@ -7,13 +7,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.Domain.Asset.Features.Categories;
 
-public record GetAssetCategory(string CategoryId) : IRequest<Result<AssetCategoryDto>>;
+public record GetAssetCategoryCommand(string CategoryId) : IRequest<Result<AssetCategoryDto>>;
 
 public class GetAssetCategoryHandler(
     IUnitOfWork unitOfWork,
-    IMapper mapper) : IRequestHandler<GetAssetCategory, Result<AssetCategoryDto>>
+    IMapper mapper) : IRequestHandler<GetAssetCategoryCommand, Result<AssetCategoryDto>>
 {
-    public async Task<Result<AssetCategoryDto>> Handle(GetAssetCategory request, CancellationToken cancellationToken)
+    public async Task<Result<AssetCategoryDto>> Handle(GetAssetCategoryCommand request, CancellationToken cancellationToken)
     {
         var result = await unitOfWork.Context.AssetCategories
             .AsNoTracking()
