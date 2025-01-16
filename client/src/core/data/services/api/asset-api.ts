@@ -8,6 +8,7 @@ import { Key } from 'react';
 import { AssetCategory, AssetCategoryForm } from '../../entities/asset/asset-category.ts';
 import { AssetSupplier, AssetSupplierForm } from '../../entities/asset/asset-supplier.ts';
 import { AssetSupplySource, AssetSupplySourceForm } from '../../entities/asset/asset-supply-source.ts';
+import { AssetStockLevelForm } from '../../entities/asset/asset-stock-level.ts';
 
 export const assetApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -109,6 +110,13 @@ export const assetApi = baseApi.injectEndpoints({
         method: 'DELETE'
       }),
     }),
+    updateAssetStockLevel: builder.mutation<AssetSupplySource, AssetStockLevelForm>({
+      query: (dto) => ({
+        url: `/assets/${dto.assetId}/stockLevels`,
+        method: 'POST',
+        body: dto
+      }),
+    }),
   }),
   overrideExisting: false,
 });
@@ -129,5 +137,6 @@ export const {
   useUpdateAssetSupplierMutation,
   useUpdateAssetSupplySourceMutation,
   useCreateAssetSupplySourceMutation,
-  useDeleteAssetSupplySourceMutation
+  useDeleteAssetSupplySourceMutation,
+  useUpdateAssetStockLevelMutation
 } = assetApi;

@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import AssetPreviewDescriptions from './components/AssetPreviewDescriptions.tsx';
 import { Col, Row } from 'antd';
 import AssetSupplerSourcesView from './components/AssetSupplerSourcesView.tsx';
+import AssetStockLevelView from './components/AssetStockLevelView.tsx';
 
 export default function AssetPreviewScreen() {
   const { assetId } = useParams<{ assetId: string }>();
@@ -15,6 +16,7 @@ export default function AssetPreviewScreen() {
           <AssetPreviewDescriptions asset={asset} />
         </Col>
         <AssetSupplerSourcesView asset={asset} onRefetch={refetch} />
+        <AssetStockLevelView asset={asset} onRefetch={refetch} />
       </Row>
     </>
   )

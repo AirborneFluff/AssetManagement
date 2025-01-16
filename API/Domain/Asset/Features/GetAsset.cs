@@ -19,7 +19,9 @@ public class GetAssetHandler(
             .AsNoTracking()
             .Include(a => a.Tags)
             .Include(a => a.Category)
-            .Include(a => a.HistoricStockLevels)
+            .Include(a => a.HistoricStockLevels
+                .OrderByDescending(s => s.CreatedOn)
+                .Take(20))
             .Include(a => a.SupplySources)
             .ThenInclude(s => s.Supplier)
             .FirstOrDefaultAsync(asset => asset.Id == request.AssetId, cancellationToken: cancellationToken);
