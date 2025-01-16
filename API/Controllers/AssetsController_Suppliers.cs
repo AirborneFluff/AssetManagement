@@ -11,7 +11,7 @@ public partial class AssetsController
     [HttpPost("Suppliers")]
     public async Task<IActionResult> CreateSupplier([FromBody] NewAssetSupplierDto dto)
     {
-        var command = new CreateSupplierCommand(dto);
+        var command = new CreateSupplier(dto);
         var result = await mediator.Send(command);
         if (result.IsFailed) return BadRequest(result.Errors);
 
@@ -21,7 +21,7 @@ public partial class AssetsController
     [HttpPut("Suppliers/{supplierId}")]
     public async Task<IActionResult> UpdateSupplier(string supplierId, [FromBody] NewAssetSupplierDto dto)
     {
-        var command = new UpdateSupplierCommand(supplierId, dto);
+        var command = new UpdateSupplier(supplierId, dto);
         var result = await mediator.Send(command);
         if (result.IsFailed) return BadRequest(result.Errors);
 
@@ -31,7 +31,7 @@ public partial class AssetsController
     [HttpGet("Suppliers")]
     public async Task<IActionResult> GetSuppliers([FromQuery]SortableParams pageParams)
     {
-        var command = new GetSuppliersCommand(pageParams);
+        var command = new GetSuppliers(pageParams);
         var result = await mediator.Send(command);
         if (result.IsFailed) return BadRequest(result.Errors);
         
@@ -42,7 +42,7 @@ public partial class AssetsController
     [HttpGet("Suppliers/options")]
     public async Task<IActionResult> GetSupplierOptions()
     {
-        var command = new GetSupplierOptionsCommand();
+        var command = new GetSupplierOptions();
         var result = await mediator.Send(command);
         if (result.IsFailed) return BadRequest(result.Errors);
         
@@ -52,7 +52,7 @@ public partial class AssetsController
     [HttpGet("Suppliers/{supplierId}")]
     public async Task<IActionResult> GetSupplier(string supplierId)
     {
-        var command = new GetSupplierCommand(supplierId);
+        var command = new GetSupplier(supplierId);
         var result = await mediator.Send(command);
         if (result.IsFailed) return BadRequest(result.Errors);
         

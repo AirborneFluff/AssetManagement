@@ -10,13 +10,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.Domain.Asset.Features.Suppliers;
 
-public record GetSuppliersCommand(SortableParams PageParams) : IRequest<Result<PagedList<AssetSupplierDto>>>;
+public record GetSuppliers(SortableParams PageParams) : IRequest<Result<PagedList<AssetSupplierDto>>>;
 
 public class GetSuppliersHandler(
     IUnitOfWork unitOfWork,
-    IMapper mapper) : IRequestHandler<GetSuppliersCommand, Result<PagedList<AssetSupplierDto>>>
+    IMapper mapper) : IRequestHandler<GetSuppliers, Result<PagedList<AssetSupplierDto>>>
 {
-    public async Task<Result<PagedList<AssetSupplierDto>>> Handle(GetSuppliersCommand request, CancellationToken cancellationToken)
+    public async Task<Result<PagedList<AssetSupplierDto>>> Handle(GetSuppliers request, CancellationToken cancellationToken)
     {
         var query = unitOfWork.Context.AssetSuppliers
             .AsNoTracking()

@@ -6,13 +6,13 @@ using MediatR;
 
 namespace API.Domain.Asset.Features.SupplySources;
 
-public record CreateSupplySourceCommand(string AssetId, NewAssetSupplySourceDto SupplySource) : IRequest<Result<AssetSupplySourceDto>>;
+public record CreateSupplySource(string AssetId, NewAssetSupplySourceDto SupplySource) : IRequest<Result<AssetSupplySourceDto>>;
 
 public class CreateSupplySourceHandler(
     IUnitOfWork unitOfWork,
-    IMapper mapper) : IRequestHandler<CreateSupplySourceCommand, Result<AssetSupplySourceDto>>
+    IMapper mapper) : IRequestHandler<CreateSupplySource, Result<AssetSupplySourceDto>>
 {
-    public async Task<Result<AssetSupplySourceDto>> Handle(CreateSupplySourceCommand request, CancellationToken cancellationToken)
+    public async Task<Result<AssetSupplySourceDto>> Handle(CreateSupplySource request, CancellationToken cancellationToken)
     {
         var newSupplySource = mapper.Map<AssetSupplySource>(request.SupplySource);
         newSupplySource.AssetId = request.AssetId;

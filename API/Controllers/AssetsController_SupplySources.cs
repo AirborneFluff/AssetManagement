@@ -12,7 +12,7 @@ public partial class AssetsController
     [ValidateEntityExists<Asset>("assetId")]
     public async Task<IActionResult> CreateSupplySource(string assetId, [FromBody] NewAssetSupplySourceDto dto)
     {
-        var command = new CreateSupplySourceCommand(assetId, dto);
+        var command = new CreateSupplySource(assetId, dto);
         var result = await mediator.Send(command);
         if (result.IsFailed) return BadRequest(result.Errors);
 
@@ -23,7 +23,7 @@ public partial class AssetsController
     [ValidateEntityExists<AssetSupplySource>("supplySourceId")]
     public async Task<IActionResult> UpdateSupplySource(string supplySourceId, [FromBody] NewAssetSupplySourceDto dto)
     {
-        var command = new UpdateSupplySourceCommand(supplySourceId, dto);
+        var command = new UpdateSupplySource(supplySourceId, dto);
         var result = await mediator.Send(command);
         if (result.IsFailed) return BadRequest(result.Errors);
 
