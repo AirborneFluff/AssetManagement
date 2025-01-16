@@ -11,15 +11,15 @@ using Microsoft.AspNetCore.Identity;
 
 namespace API.Domain.Authentication.Features;
 
-public record LoginUserCommand(string Email, string Password) : IRequest<Result<AppUserDto>>;
+public record LoginUser(string Email, string Password) : IRequest<Result<AppUserDto>>;
 
 public class LoginUserHandler(
     UserManager<AppUser> userManager,
     IHttpContextAccessor httpContextAccessor,
     IMapper mapper
-) : IRequestHandler<LoginUserCommand, Result<AppUserDto>>
+) : IRequestHandler<LoginUser, Result<AppUserDto>>
 {
-    public async Task<Result<AppUserDto>> Handle(LoginUserCommand request, CancellationToken cancellationToken)
+    public async Task<Result<AppUserDto>> Handle(LoginUser request, CancellationToken cancellationToken)
     {
         try
         {

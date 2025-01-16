@@ -1,11 +1,10 @@
-import { useGetAssetCategoriesQuery } from '../../../core/data/services/api/asset-api.ts';
+import { useGetAssetSuppliersQuery } from '../../../core/data/services/api/asset-api.ts';
 import useTable from '../../../core/hooks/table/useTable.tsx';
 import { ListScreenLayout } from '../../shared/layouts/ListScreenLayout.tsx';
 import { Button, Table } from 'antd';
 import { useNavigate } from 'react-router-dom';
 
-
-export default function AssetCategoriesListScreen() {
+export default function AssetSuppliersListScreen() {
   const navigate = useNavigate();
 
   const {
@@ -15,11 +14,19 @@ export default function AssetCategoriesListScreen() {
     pagination,
     onTableChange,
     rowKey
-  } = useTable(useGetAssetCategoriesQuery)([
+  } = useTable(useGetAssetSuppliersQuery)([
     {
       title: 'Name',
       dataIndex: 'name',
       key: 'name',
+      sorter: true,
+      sortDirections: ['descend', 'ascend'],
+      showSearch: true
+    },
+    {
+      title: 'Website',
+      dataIndex: 'website',
+      key: 'website',
       sorter: true,
       sortDirections: ['descend', 'ascend'],
       showSearch: true

@@ -1,19 +1,19 @@
 ﻿using API.Data.Interfaces;
-using API.Domain.Asset.Dto;
+using API.Domain.Asset.Dto.Categories;
 using AutoMapper;
 using FluentResults;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace API.Domain.Asset.Features;
+namespace API.Domain.Asset.Features.Categories;
 
-public record GetAssetCategoryCommand(string CategoryId) : IRequest<Result<AssetCategoryDto>>;
+public record GetAssetCategory(string CategoryId) : IRequest<Result<AssetCategoryDto>>;
 
 public class GetAssetCategoryHandler(
     IUnitOfWork unitOfWork,
-    IMapper mapper) : IRequestHandler<GetAssetCategoryCommand, Result<AssetCategoryDto>>
+    IMapper mapper) : IRequestHandler<GetAssetCategory, Result<AssetCategoryDto>>
 {
-    public async Task<Result<AssetCategoryDto>> Handle(GetAssetCategoryCommand request, CancellationToken cancellationToken)
+    public async Task<Result<AssetCategoryDto>> Handle(GetAssetCategory request, CancellationToken cancellationToken)
     {
         var result = await unitOfWork.Context.AssetCategories
             .AsNoTracking()

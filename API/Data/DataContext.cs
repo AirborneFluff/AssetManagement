@@ -1,5 +1,6 @@
 using System.Linq.Expressions;
 using System.Reflection;
+using API.Data.Converters;
 using API.Domain.Asset;
 using API.Domain.Authentication;
 using API.Domain.Shared;
@@ -16,7 +17,10 @@ public class DataContext(DbContextOptions<DataContext> options, IUserContext use
 {
     public DbSet<AppTenant> Tenants { get; set; }
     public DbSet<Asset> Assets { get; set; }
+    public DbSet<AssetTag> AssetTags { get; set; }
     public DbSet<AssetCategory> AssetCategories { get; set; }
+    public DbSet<AssetSupplier> AssetSuppliers { get; set; }
+    public DbSet<AssetSupplySource> AssetSupplySources { get; set; }
     
     protected IUserContext userContext { get; set; } = userContext;
 
@@ -24,6 +28,12 @@ public class DataContext(DbContextOptions<DataContext> options, IUserContext use
     {
         base.OnModelCreating(modelBuilder);
         ApplyGlobalFilters(modelBuilder);
+        
+        modelBuilder.Entity<AssetSupplySource>(entity =>
+        {
+            entity.Property(e => e.Prices)
+                .HasConversion(new DictionaryConverter<float, double>());
+        });
     }
 
     public override int SaveChanges()

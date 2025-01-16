@@ -1,5 +1,5 @@
 ﻿using API.Data.Interfaces;
-using API.Domain.Asset.Dto;
+using API.Domain.Asset.Dto.Categories;
 using API.Domain.Asset.Params;
 using API.Domain.Shared.Helpers;
 using API.Extensions;
@@ -8,15 +8,15 @@ using FluentResults;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace API.Domain.Asset.Features;
+namespace API.Domain.Asset.Features.Categories;
 
-public record GetAssetCategoriesCommand(GetAssetCategoriesParams PageParams) : IRequest<Result<PagedList<AssetCategoryDto>>>;
+public record GetAssetCategories(GetAssetCategoriesParams PageParams) : IRequest<Result<PagedList<AssetCategoryDto>>>;
 
 public class GetAssetCategoriesHandler(
     IUnitOfWork unitOfWork,
-    IMapper mapper) : IRequestHandler<GetAssetCategoriesCommand, Result<PagedList<AssetCategoryDto>>>
+    IMapper mapper) : IRequestHandler<GetAssetCategories, Result<PagedList<AssetCategoryDto>>>
 {
-    public async Task<Result<PagedList<AssetCategoryDto>>> Handle(GetAssetCategoriesCommand request, CancellationToken cancellationToken)
+    public async Task<Result<PagedList<AssetCategoryDto>>> Handle(GetAssetCategories request, CancellationToken cancellationToken)
     {
         var query = unitOfWork.Context.AssetCategories
             .AsNoTracking()

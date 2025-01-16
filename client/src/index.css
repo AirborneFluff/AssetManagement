@@ -7,3 +7,11 @@ body {
   padding: 0;
   margin: 0;
 }
+
+.ant-table-56 .ant-table-body {
+  min-height: 224px !important;
+  scrollbar-width: thin;
+  scrollbar-color: #eaeaea transparent;
+  scrollbar-gutter: stable;
+  border-bottom-width: 1px;
+}

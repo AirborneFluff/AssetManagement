@@ -1,7 +1,7 @@
 import { Button, Table, Tag } from 'antd';
 import { useGetAssetsQuery } from '../../../core/data/services/api/asset-api.ts';
 import { Asset, AssetTag } from '../../../core/data/entities/asset/asset.ts';
-import useTable from '../../../core/hooks/useTable.tsx';
+import useTable from '../../../core/hooks/table/useTable.tsx';
 import { ListScreenLayout } from '../../shared/layouts/ListScreenLayout.tsx';
 import { useNavigate } from 'react-router-dom';
 
@@ -70,6 +70,11 @@ export default function AssetsListScreen() {
         onChange={onTableChange}
         rowKey={rowKey}
         bordered
+        onRow={(record) => {
+          return {
+            onClick: () => navigate(record.id),
+          };
+        }}
       />
     </ListScreenLayout>
   );

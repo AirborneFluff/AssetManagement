@@ -1,18 +1,18 @@
 ﻿using API.Data.Interfaces;
-using API.Domain.Asset.Dto;
+using API.Domain.Asset.Dto.Categories;
 using AutoMapper;
 using FluentResults;
 using MediatR;
 
-namespace API.Domain.Asset.Features;
+namespace API.Domain.Asset.Features.Categories;
 
-public record CreateAssetCategoryCommand(NewAssetCategoryDto Category) : IRequest<Result<AssetCategoryDto>>;
+public record CreateAssetCategory(NewAssetCategoryDto Category) : IRequest<Result<AssetCategoryDto>>;
 
 public class CreateAssetCategoryHandler(
     IUnitOfWork unitOfWork,
-    IMapper mapper) : IRequestHandler<CreateAssetCategoryCommand, Result<AssetCategoryDto>>
+    IMapper mapper) : IRequestHandler<CreateAssetCategory, Result<AssetCategoryDto>>
 {
-    public async Task<Result<AssetCategoryDto>> Handle(CreateAssetCategoryCommand request, CancellationToken cancellationToken)
+    public async Task<Result<AssetCategoryDto>> Handle(CreateAssetCategory request, CancellationToken cancellationToken)
     {
         var categoryExists = await unitOfWork.AssetCategoryRepository.AssetCategoryExistsAsync(request.Category.Name);
         if (categoryExists) return Result.Fail("Category already exists");

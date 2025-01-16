@@ -1,19 +1,19 @@
 ﻿using API.Data.Interfaces;
-using API.Domain.Asset.Dto;
+using API.Domain.Asset.Dto.Categories;
 using AutoMapper;
 using FluentResults;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace API.Domain.Asset.Features;
+namespace API.Domain.Asset.Features.Categories;
 
-public record UpdateAssetCategoryCommand(string CategoryId, NewAssetCategoryDto Category) : IRequest<Result<AssetCategoryDto>>;
+public record UpdateAssetCategory(string CategoryId, NewAssetCategoryDto Category) : IRequest<Result<AssetCategoryDto>>;
 
 public class UpdateAssetCategoryHandler(
     IUnitOfWork unitOfWork,
-    IMapper mapper) : IRequestHandler<UpdateAssetCategoryCommand, Result<AssetCategoryDto>>
+    IMapper mapper) : IRequestHandler<UpdateAssetCategory, Result<AssetCategoryDto>>
 {
-    public async Task<Result<AssetCategoryDto>> Handle(UpdateAssetCategoryCommand request, CancellationToken cancellationToken)
+    public async Task<Result<AssetCategoryDto>> Handle(UpdateAssetCategory request, CancellationToken cancellationToken)
     {
         var category = await unitOfWork.Context.AssetCategories
             .FirstOrDefaultAsync(c => c.Id == request.CategoryId, cancellationToken);

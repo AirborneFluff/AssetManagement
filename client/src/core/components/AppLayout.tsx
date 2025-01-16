@@ -38,6 +38,10 @@ export default function AppLayout({children}: {children: ReactNode}) {
           label: 'Categories',
           key: '/categories'
         },
+        {
+          label: 'Suppliers',
+          key: '/suppliers'
+        },
       ],
     },
     {

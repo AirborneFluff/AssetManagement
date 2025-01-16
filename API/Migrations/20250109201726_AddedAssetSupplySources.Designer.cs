@@ -3,6 +3,7 @@ using System;
 using API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20250109201726_AddedAssetSupplySources")]
+    partial class AddedAssetSupplySources
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.11");
@@ -150,7 +153,6 @@ namespace API.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("AssetId")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("CreatedBy")
@@ -174,10 +176,6 @@ namespace API.Migrations
                     b.Property<DateTime?>("ModifiedOn")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Prices")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("QuantityUnit")
                         .HasColumnType("TEXT");
 
@@ -199,6 +197,53 @@ namespace API.Migrations
                     b.HasIndex("SupplierId");
 
                     b.ToTable("AssetSupplySources");
+                });
+
+            modelBuilder.Entity("API.Domain.Asset.AssetSupplySourcePrice", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasMaxLength(36)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("DeletedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("DeletedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<float>("Quantity")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("SupplySourceId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("TenantId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<double>("UnitPrice")
+                        .HasColumnType("REAL");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SupplySourceId");
+
+                    b.ToTable("AssetSupplySourcePrices");
                 });
 
             modelBuilder.Entity("API.Domain.Asset.AssetTag", b =>
@@ -497,11 +542,9 @@ namespace API.Migrations
 
             modelBuilder.Entity("API.Domain.Asset.AssetSupplySource", b =>
                 {
-                    b.HasOne("API.Domain.Asset.Asset", "Asset")
+                    b.HasOne("API.Domain.Asset.Asset", null)
                         .WithMany("SupplySources")
-                        .HasForeignKey("AssetId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("AssetId");
 
                     b.HasOne("API.Domain.Asset.AssetSupplier", "Supplier")
                         .WithMany()
@@ -509,9 +552,18 @@ namespace API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Asset");
-
                     b.Navigation("Supplier");
+                });
+
+            modelBuilder.Entity("API.Domain.Asset.AssetSupplySourcePrice", b =>
+                {
+                    b.HasOne("API.Domain.Asset.AssetSupplySource", "SupplySource")
+                        .WithMany("Prices")
+                        .HasForeignKey("SupplySourceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("SupplySource");
                 });
 
             modelBuilder.Entity("API.Domain.Asset.AssetTag", b =>
@@ -590,6 +642,11 @@ namespace API.Migrations
                     b.Navigation("SupplySources");
 
                     b.Navigation("Tags");
+                });
+
+            modelBuilder.Entity("API.Domain.Asset.AssetSupplySource", b =>
+                {
+                    b.Navigation("Prices");
                 });
 
             modelBuilder.Entity("API.Domain.Tenant.AppTenant", b =>
