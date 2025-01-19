@@ -2,7 +2,7 @@
 
 namespace API.Domain.Asset;
 
-public class Asset : BaseEntity
+public class Asset : TenantEntity
 {
     public required string Description { get; set; }
     public List<AssetTag> Tags { get; set; } = [];

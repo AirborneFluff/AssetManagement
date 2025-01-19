@@ -7,7 +7,7 @@ using FluentResults;
 
 namespace API.ActionFilters;
 
-public class ValidateEntityExistsAttribute<T> : TypeFilterAttribute where T : BaseEntity
+public class ValidateEntityExistsAttribute<T> : TypeFilterAttribute where T : TenantEntity
 {
     public ValidateEntityExistsAttribute(string idName = "id")
         : base(typeof(ValidateEntityExists<T>))
@@ -16,7 +16,7 @@ public class ValidateEntityExistsAttribute<T> : TypeFilterAttribute where T : Ba
     }
 }
 
-public class ValidateEntityExists<T>(IUnitOfWork unitOfWork, string idName) : IAsyncActionFilter where T : BaseEntity
+public class ValidateEntityExists<T>(IUnitOfWork unitOfWork, string idName) : IAsyncActionFilter where T : TenantEntity
 {
     public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
     {

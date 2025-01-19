@@ -67,6 +67,7 @@ public static class WebApplicationBuilderExtensions
         builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
         builder.Services.AddTransient<IStartupService, SeedUserRolesService>();
         builder.Services.AddTransient<IStartupService, CreateSuperUserService>();
+        builder.Services.AddTransient<IStartupService, SeedAppModulesService>();
 
         builder.Services.AddHttpContextAccessor();
         builder.Services.AddScoped<IUserContext, UserContext>();

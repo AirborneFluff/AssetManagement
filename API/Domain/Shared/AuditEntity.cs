@@ -1,12 +1,7 @@
-using System.ComponentModel.DataAnnotations;
-
 namespace API.Domain.Shared;
 
-public class AuditEntity
+public class AuditEntity : BaseEntity
 {
-    [MaxLength(36)]
-    public string Id { get; set; } = Guid.NewGuid().ToString();
-    
     public DateTime CreatedOn { get; set; }
     public DateTime? ModifiedOn { get; set; }
     public DateTime? DeletedOn { get; set; }

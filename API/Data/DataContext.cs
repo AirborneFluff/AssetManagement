@@ -3,9 +3,9 @@ using System.Reflection;
 using API.Data.Converters;
 using API.Domain.Asset;
 using API.Domain.Authentication;
+using API.Domain.Modules;
 using API.Domain.Shared;
 using API.Domain.Tenant;
-using API.Extensions;
 using API.Services.CurrentUser;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +15,7 @@ namespace API.Data;
 public class DataContext(DbContextOptions<DataContext> options, IUserContext userContext)
     : IdentityDbContext<AppUser>(options)
 {
+    public DbSet<AppModule> Modules { get; set; }
     public DbSet<AppTenant> Tenants { get; set; }
     public DbSet<Asset> Assets { get; set; }
     public DbSet<AssetTag> AssetTags { get; set; }
@@ -35,6 +36,27 @@ public class DataContext(DbContextOptions<DataContext> options, IUserContext use
             entity.Property(e => e.Prices)
                 .HasConversion(new DictionaryConverter<float, double>());
         });
+        
+        modelBuilder.Entity<AppTenant>()
+            .HasMany(tenant => tenant.Modules)
+            .WithMany(module => module.Tenants)
+            .UsingEntity<Dictionary<string, object>>(
+                "TenantModules",
+                j => j
+                    .HasOne<AppModule>()
+                    .WithMany()
+                    .HasForeignKey("ModuleId")
+                    .OnDelete(DeleteBehavior.Cascade),
+                j => j
+                    .HasOne<AppTenant>()
+                    .WithMany()
+                    .HasForeignKey("TenantId")
+                    .OnDelete(DeleteBehavior.Cascade)
+            );
+        
+        modelBuilder.Entity<AppModule>()
+            .HasIndex(module => module.Identifier)
+            .IsUnique();
     }
 
     public override int SaveChanges()
@@ -81,7 +103,7 @@ public class DataContext(DbContextOptions<DataContext> options, IUserContext use
     private void ApplyTenantIdField()
     {
         var tenantId = userContext.TenantId;
-        var entries = ChangeTracker.Entries<BaseEntity>();
+        var entries = ChangeTracker.Entries<TenantEntity>();
 
         foreach (var entry in entries)
         {
@@ -96,7 +118,7 @@ public class DataContext(DbContextOptions<DataContext> options, IUserContext use
     {
         foreach (var entityType in modelBuilder.Model.GetEntityTypes())
         {
-            var isBaseEntity = typeof(BaseEntity).IsAssignableFrom(entityType.ClrType);
+            var isBaseEntity = typeof(TenantEntity).IsAssignableFrom(entityType.ClrType);
             var isAuditEntity = typeof(AuditEntity).IsAssignableFrom(entityType.ClrType);
 
             if (!isBaseEntity && !isAuditEntity) continue;

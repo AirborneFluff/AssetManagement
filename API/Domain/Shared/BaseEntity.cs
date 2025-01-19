@@ -1,6 +1,9 @@
-﻿namespace API.Domain.Shared;
+﻿using System.ComponentModel.DataAnnotations;
 
-public class BaseEntity : AuditEntity
+namespace API.Domain.Shared;
+
+public class BaseEntity
 {
-    public string? TenantId { get; set; }
+    [MaxLength(36)]
+    public string Id { get; set; } = Guid.NewGuid().ToString();
 }

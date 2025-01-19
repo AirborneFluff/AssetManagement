@@ -2,7 +2,7 @@
 
 namespace API.Domain.Asset;
 
-public class AssetStockLevel : BaseEntity
+public class AssetStockLevel : TenantEntity
 {
     public required string AssetId { get; set; }
     public Asset? Asset { get; set; }
