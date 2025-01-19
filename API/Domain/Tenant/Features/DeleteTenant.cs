@@ -7,13 +7,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.Domain.Tenant.Features;
 
-public record DeleteTenant(string TenantId) : IRequest<Result<TenantDto>>;
+public record DeleteTenantCommand(string TenantId) : IRequest<Result<TenantDto>>;
 
 public class DeleteTenantHandler(
     IUnitOfWork unitOfWork, 
-    IMapper mapper) : IRequestHandler<DeleteTenant, Result<TenantDto>>
+    IMapper mapper) : IRequestHandler<DeleteTenantCommand, Result<TenantDto>>
 {
-    public async Task<Result<TenantDto>> Handle(DeleteTenant request, CancellationToken cancellationToken)
+    public async Task<Result<TenantDto>> Handle(DeleteTenantCommand request, CancellationToken cancellationToken)
     {
         var tenant = await unitOfWork.Context.Tenants
             .FirstOrDefaultAsync(t => t.Id == request.TenantId, cancellationToken);

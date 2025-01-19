@@ -14,7 +14,7 @@ public class TenantsController(IMediator mediator) : BaseApiController
     [Authorize(Roles = "SuperUser")]
     public async Task<IActionResult> CreateTenant([FromBody] NewTenantDto dto)
     {
-        var command = new CreateTenant(dto);
+        var command = new CreateTenantCommand(dto);
         var result = await mediator.Send(command);
         if (result.IsFailed) return BadRequest(result.Errors);
 
@@ -25,7 +25,7 @@ public class TenantsController(IMediator mediator) : BaseApiController
     [Authorize(Roles = "SuperUser")]
     public async Task<IActionResult> DeleteTenant(string tenantId)
     {
-        var command = new DeleteTenant(tenantId);
+        var command = new DeleteTenantCommand(tenantId);
         var result = await mediator.Send(command);
         if (result.IsFailed) return BadRequest(result.Errors);
 
@@ -36,7 +36,7 @@ public class TenantsController(IMediator mediator) : BaseApiController
     [Authorize(Roles = "SuperUser,Admin")]
     public async Task<IActionResult> CreateUser([FromBody] NewAppUserDto dto, string tenantId)
     {
-        var command = new CreateUser(dto, tenantId);
+        var command = new CreateUserCommand(dto, tenantId);
         var result = await mediator.Send(command);
         if (result.IsFailed) return BadRequest(result.Errors);
 

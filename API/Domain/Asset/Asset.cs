@@ -10,5 +10,8 @@ public class Asset : BaseEntity
     public required string CategoryId { get; set; }
     public AssetCategory? Category { get; set; }
 
+    public int StockLevel { get; set; }
+
     public List<AssetSupplySource> SupplySources { get; set; } = [];
+    public List<AssetStockLevel> HistoricStockLevels { get; set; } = [];
 }

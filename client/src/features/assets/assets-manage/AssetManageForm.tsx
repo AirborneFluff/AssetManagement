@@ -1,7 +1,7 @@
 import {
   Button,
   Form,
-  Input, Select
+  Input, InputNumber, Select
 } from 'antd';
 import { CloseCircleTwoTone } from '@ant-design/icons';
 import { Asset, AssetForm } from '../../../core/data/entities/asset/asset.ts';
@@ -27,6 +27,7 @@ export default function AssetManageForm({onSubmit, isLoading}: FormProps<AssetFo
       label: asset.category?.name,
     });
     form.setFieldValue('tags', asset.tags.map(tag => tag.tag));
+    form.setFieldValue('stockLevel', asset.stockLevel);
   }, [form]);
 
   const { formLoading } = useManageForm<Asset>({
@@ -53,6 +54,12 @@ export default function AssetManageForm({onSubmit, isLoading}: FormProps<AssetFo
         name='description'
         tooltip="This is a required field">
         <Input />
+      </Form.Item>
+
+      <Form.Item
+        label="Stock Level"
+        name='stockLevel'>
+        <InputNumber />
       </Form.Item>
 
       <Form.Item

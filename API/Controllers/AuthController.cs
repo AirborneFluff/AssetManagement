@@ -14,7 +14,7 @@ public class AuthController(IMediator mediator) : ControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginDto dto)
     {
-        var command = new LoginUser(dto.Email, dto.Password);
+        var command = new LoginUserCommand(dto.Email, dto.Password);
         var result = await mediator.Send(command);
         if (result.IsFailed) return BadRequest(result.Errors);
 

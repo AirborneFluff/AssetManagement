@@ -8,16 +8,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.Domain.Authentication.Features;
 
-public record CreateUser(NewAppUserDto AppUserDto, string TenantId) : IRequest<Result<AppUserDto>>;
+public record CreateUserCommand(NewAppUserDto AppUserDto, string TenantId) : IRequest<Result<AppUserDto>>;
 
 public class CreateUserHandler(
     IUnitOfWork unitOfWork, 
     UserManager<AppUser> userManager, 
     RoleManager<IdentityRole> roleManager,
     IMapper mapper) 
-    : IRequestHandler<CreateUser, Result<AppUserDto>>
+    : IRequestHandler<CreateUserCommand, Result<AppUserDto>>
 {
-    public async Task<Result<AppUserDto>> Handle(CreateUser request, CancellationToken cancellationToken)
+    public async Task<Result<AppUserDto>> Handle(CreateUserCommand request, CancellationToken cancellationToken)
     {
         var tenant = await unitOfWork.Context.Tenants
             .SingleOrDefaultAsync(t => t.Id == request.TenantId, cancellationToken);

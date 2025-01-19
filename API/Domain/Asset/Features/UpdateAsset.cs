@@ -19,6 +19,15 @@ public class UpdateAssetHandler(
             .Include(a => a.Tags)
             .FirstOrDefaultAsync(a => a.Id == request.AssetId, cancellationToken);
         if (asset is null) return Result.Fail("Asset not found");
+
+        if (request.Asset.StockLevel != asset.StockLevel)
+        {
+            asset.HistoricStockLevels.Add(new AssetStockLevel
+            {
+                AssetId = asset.Id,
+                StockLevel = asset.StockLevel
+            });
+        }
         
         mapper.Map(request.Asset, asset);
         var incomingTagNames = request.Asset.Tags.ToHashSet();
