@@ -46,7 +46,6 @@ export default function AssetSupplySourceTable({ supplySources, onUpdate, onDele
   return (
     <Table
       size='small'
-      bordered
       dataSource={dataSource}
       columns={mainColumns}
       rowKey="id"

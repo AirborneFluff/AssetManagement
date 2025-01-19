@@ -1,5 +1,5 @@
 import AssetSupplySourceTable from './AssetSupplySourceTable.tsx';
-import { Col, Drawer } from 'antd';
+import { Col, Drawer, Typography } from 'antd';
 import AssetSupplySourceFormView from './AssetSupplySourceForm.tsx';
 import {
   useCreateAssetSupplySourceMutation, useDeleteAssetSupplySourceMutation,
@@ -8,6 +8,8 @@ import {
 import { AssetSupplySource, AssetSupplySourceForm } from '../../../../core/data/entities/asset/asset-supply-source.ts';
 import { Asset } from '../../../../core/data/entities/asset/asset.ts';
 import { useState } from 'react';
+import PageElement from '../../../shared/components/PageElement.tsx';
+const { Text } = Typography;
 
 interface AssetSupplySourceFormProps {
   asset: Asset | undefined;
@@ -55,12 +57,17 @@ export default function AssetSupplerSourcesView({asset, onRefetch}: AssetSupplyS
 
   return (
     <Col span={24} xl={12}>
-      <AssetSupplySourceTable
-        supplySources={asset?.supplySources}
-        onUpdate={handleOnSupplySourceUpdate}
-        onDelete={handleOnSupplySourceDelete}
-        onShowAddDialog={() => setShowDrawer(true)}
-      />
+      <PageElement
+        styles={{body: {padding: 0}}}
+        title={<Text>Supply Sources</Text>}
+      >
+        <AssetSupplySourceTable
+          supplySources={asset?.supplySources}
+          onUpdate={handleOnSupplySourceUpdate}
+          onDelete={handleOnSupplySourceDelete}
+          onShowAddDialog={() => setShowDrawer(true)}
+        />
+      </PageElement>
       <Drawer
         title="New Supply Source"
         onClose={() => setShowDrawer(false)}
