@@ -1,3 +1,5 @@
-export const humanizeDate = (value: string) => {
-  return new Date(value).toDateString();
+import { DateTime } from 'luxon';
+
+export const humanizeDate = (value: string): string => {
+  return DateTime.fromISO(value).toFormat('dd-MM-yy');
 }

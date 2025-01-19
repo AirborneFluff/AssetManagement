@@ -21,9 +21,8 @@ export default function AssetStockLevelView({asset, onRefetch}: AssetStockLevelV
     value: s.stockLevel
   })) ?? [];
 
-  // todo Sort the data client side my date.
-  const chartData = [...historicData, {
-    name: humanizeDate(new Date().toString()),
+  const chartData = [...historicData.reverse(), {
+    name: 'Now',
     value: asset?.stockLevel
   }];
 
@@ -47,7 +46,7 @@ export default function AssetStockLevelView({asset, onRefetch}: AssetStockLevelV
         styles={{header: {backgroundColor: 'rgb(250, 250, 250)'}}}
         title={(
           <Flex justify='space-between' align='center'>
-            <Text>Stock Level: {asset?.stockLevel}</Text>
+            <Text>Current Stock Level: {asset?.stockLevel}</Text>
             <Button type='text' onClick={() => setShowDrawer(true)}>Update</Button>
           </Flex>
         )}
