@@ -10,6 +10,14 @@ namespace API.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AddColumn<string>(
+                name: "ModulesVersion",
+                table: "Tenants",
+                type: "TEXT",
+                maxLength: 36,
+                nullable: false,
+                defaultValue: "");
+
             migrationBuilder.CreateTable(
                 name: "Modules",
                 columns: table => new
@@ -67,6 +75,10 @@ namespace API.Migrations
 
             migrationBuilder.DropTable(
                 name: "Modules");
+
+            migrationBuilder.DropColumn(
+                name: "ModulesVersion",
+                table: "Tenants");
         }
     }
 }

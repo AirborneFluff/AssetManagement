@@ -415,6 +415,11 @@ namespace API.Migrations
                     b.Property<DateTime?>("ModifiedOn")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("ModulesVersion")
+                        .IsRequired()
+                        .HasMaxLength(36)
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(128)

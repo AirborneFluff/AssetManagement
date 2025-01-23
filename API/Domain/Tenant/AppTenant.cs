@@ -13,6 +13,14 @@ public class AppTenant : AuditEntity
     [Range(1, int.MaxValue)]
     public int Licences { get; set; }
 
+    [MaxLength(36)]
+    public required string ModulesVersion { get; set; } = Guid.NewGuid().ToString();
+
     public List<AppUser> Users { get; set; } = [];
     public List<AppModule> Modules { get; set; } = [];
+
+    public void RefreshModulesVersion()
+    {
+        ModulesVersion = Guid.NewGuid().ToString();
+    }
 }

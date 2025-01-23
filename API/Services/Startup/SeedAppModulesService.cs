@@ -34,6 +34,7 @@ public class SeedAppModulesService(DataContext dataContext) : IStartupService
         foreach (var tenant in tenants)
         {
             tenant.Modules.AddRange(enabledNewModules);
+            tenant.RefreshModulesVersion();
         }
         
         return await dataContext.SaveChangesAsync() != newModules.Count

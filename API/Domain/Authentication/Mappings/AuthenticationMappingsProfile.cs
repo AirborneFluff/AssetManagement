@@ -10,8 +10,18 @@ public class AuthenticationMappingsProfile : Profile
         CreateMap<AppUser, AppUserDto>()
             .ForMember(
                 dest => dest.Role,
-                opt => opt.MapFrom((src, dest, destMember, context) =>
+                opt => opt.MapFrom((_, _, _, context) =>
                     context.Items.TryGetValue("Role", out var role) ? role.ToString() : null
-            ));
+                ))
+            .ForMember(
+                dest => dest.ModulesVersion,
+                opt => opt.MapFrom((_, _, _, context) =>
+                    context.Items.TryGetValue("ModulesVersion", out var mVersion) ? mVersion : null
+                ))
+            .ForMember(
+                dest => dest.Modules,
+                opt => opt.MapFrom((_, _, _, context) =>
+                    context.Items.TryGetValue("Modules", out var modules) ? modules : null
+                ));
     }
 }

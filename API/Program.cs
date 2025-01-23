@@ -1,5 +1,6 @@
 using API.Extensions;
 using API.Middleware;
+using Microsoft.AspNetCore.Diagnostics;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +28,7 @@ app.UseHealthChecks("/api/_health");
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseMiddleware<TenantModulesMiddleware>();
 app.UseMiddleware<TenantAuthorizationMiddleware>();
 
 app.MapControllers();

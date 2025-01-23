@@ -6,4 +6,7 @@ public class AppUserDto
     public required string Email { get; set; }
     public string? TenantId { get; set; }
     public string? Role { get; set; }
+    public string? ModulesVersion { get; set; }
+
+    public IEnumerable<string> Modules { get; set; } = [];
 }

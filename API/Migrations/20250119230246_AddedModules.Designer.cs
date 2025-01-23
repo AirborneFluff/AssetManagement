@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250119222823_AddedModules")]
+    [Migration("20250119230246_AddedModules")]
     partial class AddedModules
     {
         /// <inheritdoc />
@@ -416,6 +416,11 @@ namespace API.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime?>("ModifiedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ModulesVersion")
+                        .IsRequired()
+                        .HasMaxLength(36)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")

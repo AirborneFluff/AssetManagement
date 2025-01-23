@@ -2,6 +2,7 @@ using API.Data;
 using API.Data.Interfaces;
 using API.Domain.Authentication;
 using API.Services.CurrentUser;
+using API.Services.Modules;
 using API.Services.Startup;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
@@ -68,6 +69,7 @@ public static class WebApplicationBuilderExtensions
         builder.Services.AddTransient<IStartupService, SeedUserRolesService>();
         builder.Services.AddTransient<IStartupService, CreateSuperUserService>();
         builder.Services.AddTransient<IStartupService, SeedAppModulesService>();
+        builder.Services.AddSingleton<ITenantModulesService, TenantModulesService>();
 
         builder.Services.AddHttpContextAccessor();
         builder.Services.AddScoped<IUserContext, UserContext>();
