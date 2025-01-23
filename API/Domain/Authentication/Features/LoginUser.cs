@@ -20,42 +20,22 @@ public class LoginUserHandler(
     IUnitOfWork unitOfWork,
     UserManager<AppUser> userManager,
     IHttpContextAccessor httpContextAccessor,
-    IMapper mapper
+    IMediator mediator
 ) : IRequestHandler<LoginUserCommand, Result<AppUserDto>>
 {
     public async Task<Result<AppUserDto>> Handle(LoginUserCommand request, CancellationToken cancellationToken)
     {
         try
         {
-            // create a new feature which gets the user and creates claims
-            // Or leave as is, and in the module middleware, reconstruct the claims
-            // by using all the current user data and add new modules
             var user = await userManager.FindByEmailAsync(request.Email);
             if (user is null || !await userManager.CheckPasswordAsync(user, request.Password))
             {
                 return Result.Fail("Invalid username or password");
             }
-
-            var roles = await userManager.GetRolesAsync(user);
-            var role = roles.Single();
-            var (modules, modulesVersion) = await GetUserModulesVersionAsync(user.TenantId, cancellationToken);
-
-            var claims = new Collection<Claim>
-                {
-                    new(ClaimTypes.NameIdentifier, user.Id),
-                    new(ClaimTypes.Name, user.Email!),
-                    new(ClaimTypes.Role, role),
-                    new(CustomClaimTypes.TenantId, user.TenantId ?? string.Empty),
-                    new(CustomClaimTypes.ModulesVersion, modulesVersion ?? string.Empty)
-                };
-
-            foreach (var module in modules)
-            {
-                claims.Add(new Claim(CustomClaimTypes.Modules, module.Identifier));
-            }
-        
-            var claimsIdentity = new ClaimsIdentity(
-                claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            
+            var response = await mediator.Send(new GetUserCredentialsCommand(user), cancellationToken);
+            if (response.IsFailed) return Result.Fail(response.Errors);
+            var (userDto, principal) = response.Value;
 
             if (httpContextAccessor.HttpContext is null)
             {
@@ -64,14 +44,7 @@ public class LoginUserHandler(
             
             await httpContextAccessor.HttpContext.SignInAsync(
                 CookieAuthenticationDefaults.AuthenticationScheme, 
-                new ClaimsPrincipal(claimsIdentity));
-            
-            var userDto = mapper.Map<AppUserDto>(user, opt =>
-            {
-                opt.Items["Role"] = role;
-                opt.Items["Modules"] = modules.Select(module => module.Identifier);
-                opt.Items["ModulesVersion"] = modulesVersion;
-            });
+                principal);
 
             return userDto;
         }

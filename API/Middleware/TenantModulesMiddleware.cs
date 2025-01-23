@@ -1,37 +1,77 @@
-﻿using API.Domain.Authentication.Constants;
+﻿using System.Security.Claims;
+using API.Domain.Authentication;
+using API.Domain.Authentication.Constants;
+using API.Domain.Authentication.Features;
 using API.Services.Modules;
+using MediatR;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
 
 namespace API.Middleware;
 
 public class TenantModulesMiddleware(RequestDelegate next)
 {
-    public async Task Invoke(HttpContext context, ITenantModulesService modulesService)
+    public async Task Invoke(
+        HttpContext context, 
+        ITenantModulesService modulesService,
+        IMediator mediator,
+        UserManager<AppUser> userManager)
     {
-        var cancellationToken = context.RequestAborted; 
-        var tenantId = context.User.FindFirst(CustomClaimTypes.TenantId)?.Value;
-        var tenantModuleVersion = context.User.FindFirst(CustomClaimTypes.ModulesVersion)?.Value;
+        var requestCancellationToken = context.RequestAborted;
 
-        if (tenantId == null || tenantModuleVersion == null)
+        if (!TryGetTenantClaims(context, out var tenantId, out var tenantModuleVersion))
         {
             await next(context);
             return;
         }
-        
-        var validVersion = await modulesService.IsModuleVersionValid(tenantId, tenantModuleVersion, cancellationToken);
-        
-        var routeValues = context.Request.RouteValues;
-        /*if (routeValues.TryGetValue("tenantId", out var tenantIdInRoute))
+
+        if (await modulesService.IsModuleVersionValid(tenantId!, tenantModuleVersion!, requestCancellationToken))
         {
-            var tenantIdClaim = context.User.FindFirst(CustomClaimTypes.TenantId)?.Value;
+            await next(context);
+            return;
+        }
 
-            if (!string.IsNullOrEmpty(tenantIdClaim) && tenantIdInRoute?.ToString() != tenantIdClaim)
-            {
-                context.Response.StatusCode = StatusCodes.Status403Forbidden;
-                await context.Response.WriteAsync("Forbidden: Access to this resource is not allowed.");
-                return;
-            }
-        }*/
+        var userEmail = context.User.FindFirst(ClaimTypes.Name)?.Value;
+        if (string.IsNullOrEmpty(userEmail))
+        {
+            await RespondUnauthorized(context, "Invalid Credentials", requestCancellationToken);
+            return;
+        }
 
+        var user = await userManager.FindByEmailAsync(userEmail);
+        if (user is null)
+        {
+            await RespondUnauthorized(context, "Invalid Credentials", requestCancellationToken);
+            return;
+        }
+
+        var credentialsResponse = await mediator.Send(new GetUserCredentialsCommand(user), requestCancellationToken);
+        if (credentialsResponse.IsFailed)
+        {
+            await RespondUnauthorized(context, "Invalid Credentials", requestCancellationToken);
+            return;
+        }
+
+        await SignInUser(context, credentialsResponse.Value.principal);
         await next(context);
+    }
+
+    private static bool TryGetTenantClaims(HttpContext context, out string? tenantId, out string? tenantModuleVersion)
+    {
+        tenantId = context.User.FindFirst(CustomClaimTypes.TenantId)?.Value;
+        tenantModuleVersion = context.User.FindFirst(CustomClaimTypes.ModulesVersion)?.Value;
+        return tenantId is not null && tenantModuleVersion is not null;
+    }
+
+    private static async Task RespondUnauthorized(HttpContext context, string message, CancellationToken cancellationToken)
+    {
+        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+        await context.Response.WriteAsync(message, cancellationToken);
+    }
+
+    private static async Task SignInUser(HttpContext context, ClaimsPrincipal principal)
+    {
+        await context.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
     }
 }
