@@ -20,7 +20,7 @@ public class CreateUserHandler(
     public async Task<Result<AppUserDto>> Handle(CreateUserCommand request, CancellationToken cancellationToken)
     {
         var tenant = await unitOfWork.Context.Tenants
-            .SingleOrDefaultAsync(t => t.Id == request.TenantId, cancellationToken);
+            .FirstOrDefaultAsync(t => t.Id == request.TenantId, cancellationToken);
         if (tenant is null) return Result.Fail($"Tenant {request.TenantId} does not exist.");
         
         var role = await roleManager.FindByNameAsync(request.AppUserDto.Role);

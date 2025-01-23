@@ -61,7 +61,7 @@ public class TenantModulesMiddleware(RequestDelegate next)
     {
         tenantId = context.User.FindFirst(CustomClaimTypes.TenantId)?.Value;
         tenantModuleVersion = context.User.FindFirst(CustomClaimTypes.ModulesVersion)?.Value;
-        return tenantId is not null && tenantModuleVersion is not null;
+        return !String.IsNullOrWhiteSpace(tenantId) && !String.IsNullOrWhiteSpace(tenantModuleVersion);
     }
 
     private static async Task RespondUnauthorized(HttpContext context, string message, CancellationToken cancellationToken)
