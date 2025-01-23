@@ -5,14 +5,21 @@ public static class AppModuleSettings
     private static readonly ModuleSetting AssetManagement = new
     (
         displayName: "Asset Management",
-        identifier: "ASSET_MANAGEMENT",
+        identifier: AppModules.AssetManagement,
         automaticallyEnabled: true
     );
 
-    private static readonly ModuleSetting StockOrdersManagement = new
+    private static readonly ModuleSetting PurchaseOrdersManagement = new
     (
-        displayName: "Stock Orders Management",
-        identifier: "STOCK_ORDERS_MANAGEMENT",
+        displayName: "Purchase Orders Management",
+        identifier: AppModules.PurchaseOrders,
+        automaticallyEnabled: false
+    );
+
+    private static readonly ModuleSetting SalesOrdersManagement = new
+    (
+        displayName: "Sales Orders Management",
+        identifier: AppModules.SalesOrders,
         automaticallyEnabled: false
     );
     
@@ -21,7 +28,8 @@ public static class AppModuleSettings
         return
         [
             AssetManagement,
-            StockOrdersManagement
+            PurchaseOrdersManagement,
+            SalesOrdersManagement
         ];
     }
 }

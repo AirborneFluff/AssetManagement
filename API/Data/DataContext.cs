@@ -4,6 +4,8 @@ using API.Data.Converters;
 using API.Domain.Asset;
 using API.Domain.Authentication;
 using API.Domain.Modules;
+using API.Domain.PurchaseOrders;
+using API.Domain.SalesOrders;
 using API.Domain.Shared;
 using API.Domain.Tenant;
 using API.Services.CurrentUser;
@@ -23,6 +25,9 @@ public class DataContext(DbContextOptions<DataContext> options, IUserContext use
     public DbSet<AssetSupplier> AssetSuppliers { get; set; }
     public DbSet<AssetStockLevel> AssetStockLevels { get; set; }
     public DbSet<AssetSupplySource> AssetSupplySources { get; set; }
+
+    public DbSet<PurchaseOrder> PurchaseOrders { get; set; }
+    public DbSet<SalesOrder> SalesOrders { get; set; }
     
     protected IUserContext userContext { get; set; } = userContext;
 

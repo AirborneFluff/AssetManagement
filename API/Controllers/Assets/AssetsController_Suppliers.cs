@@ -4,7 +4,7 @@ using API.Domain.Shared.Params;
 using API.Extensions;
 using Microsoft.AspNetCore.Mvc;
 
-namespace API.Controllers;
+namespace API.Controllers.Assets;
 
 public partial class AssetsController
 {

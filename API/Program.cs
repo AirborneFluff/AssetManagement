@@ -28,6 +28,7 @@ app.UseHealthChecks("/api/_health");
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseMiddleware<TenantModuleVersionsMiddleware>();
 app.UseMiddleware<TenantModulesMiddleware>();
 app.UseMiddleware<TenantAuthorizationMiddleware>();
 

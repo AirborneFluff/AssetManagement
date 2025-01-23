@@ -6,7 +6,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace API.Controllers;
+namespace API.Controllers.Assets;
 
 [Authorize]
 public partial class AssetsController(IMediator mediator) : BaseApiController

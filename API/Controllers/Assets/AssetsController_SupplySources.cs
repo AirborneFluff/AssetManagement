@@ -4,7 +4,7 @@ using API.Domain.Asset.Dto.SupplySources;
 using API.Domain.Asset.Features.SupplySources;
 using Microsoft.AspNetCore.Mvc;
 
-namespace API.Controllers;
+namespace API.Controllers.Assets;
 
 public partial class AssetsController
 {
