@@ -13,30 +13,30 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.Domain.Authentication.Features;
 
-public record GetUserCredentialsCommand(AppUser User)
-    : IRequest<Result<(AppUserDto userDto, ClaimsPrincipal principal)>>;
+public record GetUserCredentialsCommand(AppUser User, string? TenantId = null)
+    : IRequest<Result<ClaimsPrincipal>>;
 
 public class GetUserCredentialsHandler(
     IUnitOfWork unitOfWork,
-    UserManager<AppUser> userManager,
-    IMapper mapper
-) : IRequestHandler<GetUserCredentialsCommand, Result<(AppUserDto userDto, ClaimsPrincipal principal)>>
+    UserManager<AppUser> userManager)
+    : IRequestHandler<GetUserCredentialsCommand, Result<ClaimsPrincipal>>
 {
-    public async Task<Result<(AppUserDto userDto, ClaimsPrincipal principal)>>
+    public async Task<Result<ClaimsPrincipal>>
         Handle(GetUserCredentialsCommand request, CancellationToken cancellationToken)
     {
         try
         {
             var roles = await userManager.GetRolesAsync(request.User);
             var role = roles.Single();
-            var (modules, modulesVersion) = await GetUserModulesVersionAsync(request.User.TenantId, cancellationToken);
+            var (modules, modulesVersion) =
+                await GetUserModulesVersionAsync(request.TenantId ?? request.User.TenantId, cancellationToken);
 
             var claims = new Collection<Claim>
                 {
                     new(ClaimTypes.NameIdentifier, request.User.Id),
                     new(ClaimTypes.Name, request.User.Email!),
                     new(ClaimTypes.Role, role),
-                    new(CustomClaimTypes.TenantId, request.User.TenantId ?? string.Empty),
+                    new(CustomClaimTypes.TenantId, request.TenantId ?? request.User.TenantId ?? string.Empty),
                     new(CustomClaimTypes.ModulesVersion, modulesVersion ?? string.Empty)
                 };
 
@@ -48,16 +48,7 @@ public class GetUserCredentialsHandler(
             var claimsIdentity = new ClaimsIdentity(
                 claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
-            var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
-            
-            var userDto = mapper.Map<AppUserDto>(request.User, opt =>
-            {
-                opt.Items["Role"] = role;
-                opt.Items["Modules"] = modules.Select(module => module.Identifier);
-                opt.Items["ModulesVersion"] = modulesVersion;
-            });
-
-            return (userDto, claimsPrincipal);
+            return new ClaimsPrincipal(claimsIdentity);
         }
         catch(Exception ex)
         {

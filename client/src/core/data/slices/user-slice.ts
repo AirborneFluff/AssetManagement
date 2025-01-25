@@ -1,9 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { User } from '../entities/user.ts'
 
-const storedUser = localStorage.getItem('user');
 const initialState: userSliceState = {
-  user: storedUser !== null ? JSON.parse(storedUser) : null,
+  user: null,
 };
 
 interface userSliceState {
@@ -16,11 +15,9 @@ export const userSlice = createSlice({
   reducers: {
     setUser: (state, action: PayloadAction<User>) => {
       state.user = action.payload;
-      localStorage.setItem('user', JSON.stringify(action.payload));
     },
     logout: (state) => {
       state.user = null;
-      localStorage.removeItem('user');
     },
   }
 })

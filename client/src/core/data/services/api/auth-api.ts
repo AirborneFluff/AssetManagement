@@ -16,6 +16,12 @@ export const authApi = baseApi.injectEndpoints({
         method: 'POST',
         body: dto
       }),
+    }),
+    getUser: builder.query<User, void>({
+      query: () => ({
+        url: '/auth',
+        method: 'GET'
+      }),
     })
   }),
   overrideExisting: false,
@@ -24,4 +30,5 @@ export const authApi = baseApi.injectEndpoints({
 export const {
   useLoginMutation,
   useLogoutMutation,
+  useGetUserQuery,
 } = authApi;

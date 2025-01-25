@@ -46,15 +46,15 @@ public class TenantModuleVersionsMiddleware(RequestDelegate next)
             return;
         }
 
-        var credentialsResponse = await mediator.Send(new GetUserCredentialsCommand(user), requestCancellationToken);
+        var credentialsResponse = await mediator.Send(new GetUserCredentialsCommand(user, tenantId), requestCancellationToken);
         if (credentialsResponse.IsFailed)
         {
             await RespondUnauthorized(context, "Invalid Credentials", requestCancellationToken);
             return;
         }
 
-        await SignInUser(context, credentialsResponse.Value.principal);
-        context.User = credentialsResponse.Value.principal;
+        await SignInUser(context, credentialsResponse.Value);
+        context.User = credentialsResponse.Value;
         await next(context);
     }
 

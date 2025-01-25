@@ -1,158 +1,99 @@
-import React, { ReactNode } from 'react';
-import {
-  LogoutOutlined,
-  AuditOutlined,
-  DashboardOutlined,
-  PieChartOutlined,
-  ArrowLeftOutlined
-} from '@ant-design/icons';
-import { Button, MenuProps } from 'antd';
+import { ReactNode } from 'react';
+import { MenuProps } from 'antd';
 import { Layout, Menu } from 'antd';
-import { useLogout } from '../hooks/useLogout.ts';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import AppHeader from './AppHeader.tsx';
+import { AppModule } from '../data/entities/app-module.ts';
+import { useSelector } from 'react-redux';
+import { RootState } from '../data/store.ts';
 
 const { Content, Sider } = Layout;
 
-type MenuItem = Required<MenuProps>['items'][number];
-
-interface MenuItemConfig {
+interface MenuSection {
   label: string;
-  key?: string;
-  icon?: React.ReactNode;
-  children?: MenuItemConfig[];
+  baseRoute: string;
+  children: {label: string, route: string}[];
+  requiredModule?: AppModule;
 }
 
 export default function AppLayout({children}: {children: ReactNode}) {
-  const onLogout = useLogout();
+  const user = useSelector((state: RootState) => state.user.user);
   const navigate = useNavigate();
-  const location = useLocation();
 
-  const menuItemsConfig: MenuItemConfig[] = [
+  const menuConfig: MenuSection[] = [
     {
       label: 'Assets',
-      key: '/assets',
-      icon: <AuditOutlined />,
+      baseRoute: '/assets',
       children: [
-        { label: 'Assets', key: '/' },
-        {
-          label: 'Categories',
-          key: '/categories'
-        },
-        {
-          label: 'Suppliers',
-          key: '/suppliers'
-        },
+        {label: 'Assets', route: '/'},
+        {label: 'Categories', route: '/categories'},
+        {label: 'Suppliers', route: '/supplier'},
       ],
+      requiredModule: 'ASSET_MANAGEMENT'
     },
     {
-      label: 'Dashboard',
-      icon: <DashboardOutlined />,
-      key: '/dashboard',
+      label: 'Purchase Orders',
+      baseRoute: '/purchaseOrders',
+      children: [
+        {label: 'Test', route: '/'},
+      ],
+      requiredModule: 'PURCHASE_ORDERS'
     },
     {
-      label: 'Reports',
-      key: '/reports',
-      icon: <PieChartOutlined />,
+      label: 'Sales Orders',
+      baseRoute: '/salesOrders',
       children: [
-        { label: 'Summary', key: '/summary' },
-        { label: 'Charts', key: '/charts' },
+        {label: 'Test', route: '/'},
       ],
+      requiredModule: 'SALES_ORDERS'
     },
   ];
 
-  const buildMenuItems = (itemsConfig: typeof menuItemsConfig, parentKey?: string): MenuItem[] => {
-    return itemsConfig.map((item) => {
-      if (item.children) {
-        return {
-          label: item.label,
-          key: (parentKey ?? '') + item.key,
-          icon: item.icon,
-          children: buildMenuItems(item.children, item.key)
-        } as MenuItem;
+  function buildMenuItems(config: MenuSection[]): MenuProps['items'] {
+    const menuItems: MenuProps['items'] = [];
+
+    config.forEach((section) => {
+      if (section.requiredModule && (!user || !user.modules.includes(section.requiredModule))) {
+        return;
       }
 
-      return {
-        label: item.label,
-        key: (parentKey ?? '') + item.key,
-        icon: item.icon,
-      } as MenuItem;
+      if (menuItems.length === 0) {
+        menuItems.push({ type: 'divider' });
+      }
+      const group = {
+        label: section.label,
+        type: 'group',
+        key: `${section.baseRoute}-group`,
+        children: section.children.map((child) => ({
+          label: child.label,
+          key: `${section.baseRoute}${child.route}`,
+        })),
+      };
+
+      menuItems.push(group as never);
+      menuItems.push({ type: 'divider' });
     });
-  };
 
-  const menuItems = buildMenuItems(menuItemsConfig);
-
-  const selectedKey = location.pathname.replace('/app', '');
-  const openKeys = menuItemsConfig
-    .filter((item) =>
-      item.children?.some((child) => selectedKey.startsWith(child.key || ''))
-    )
-    .map((item) => item.key || '');
-
-  /*const findBreadcrumbTrail = (
-    key: string | undefined,
-    itemsConfig: MenuItemConfig[],
-    trail: MenuItemConfig[] = []
-  ): MenuItemConfig[] => {
-    for (const item of itemsConfig) {
-      const currentTrail = [...trail, item];
-
-      if (item.key === key) {
-        return currentTrail;
-      }
-
-      if (item.children) {
-        const foundTrail = findBreadcrumbTrail(key, item.children, currentTrail);
-        if (foundTrail.length) {
-          return foundTrail;
-        }
-      }
-    }
-
-    return [];
-  };*/
-
-  //const breadcrumbTrail = findBreadcrumbTrail(selectedKey, menuItemsConfig);
-
-  const navigateBack = () => navigate(-1);
+    return menuItems;
+  }
 
   return (
     <Layout style={{ height: '100dvh' }}>
-      <Sider theme='light'>
-        <div className={`flex flex-col justify-between h-full`}>
-          <div className={`mt-12`}>
-            <Menu
-              mode="inline"
-              items={menuItems}
-              selectedKeys={[selectedKey]}
-              defaultOpenKeys={openKeys}
-              onClick={({ key }) => navigate(`/app${key}`)}
-            />
-          </div>
-          <Button
-            onClick={() => onLogout()}
-            icon={<LogoutOutlined />}
-            className={`m-2`}
-          >Logout
-          </Button>
-        </div>
+      <Sider width={250} className='bg-white border-r border-gray-200'>
+        <div className='rounded-lg w-9/12 h-12 bg-gray-200 mx-auto my-8'/>
+        <Menu
+          mode="inline"
+          defaultSelectedKeys={['/assets/']}
+          items={buildMenuItems(menuConfig)}
+          onClick={({key}) => navigate(`/app${key}`)}
+        />
       </Sider>
       <Layout>
-        <div className={`m-4 py-4 px-2 bg-white rounded-lg flex items-center justify-start gap-4`}>
-          <Button icon={<ArrowLeftOutlined />} type='text' onClick={navigateBack}>Back</Button>
-          {/*<Breadcrumb>
-            {breadcrumbTrail.map((item) => {
-              return (
-                <Breadcrumb.Item key={item.key}>
-                  {item.label}
-                </Breadcrumb.Item>
-              );
-            })}
-          </Breadcrumb>*/}
-        </div>
-        <Content className={`p-6 mx-4 mb-4 bg-white rounded-lg overflow-y-auto`}>
+        <AppHeader />
+        <Content className='p-6 m-2 mb-4 bg-white rounded-lg overflow-y-auto'>
           {children}
         </Content>
       </Layout>
     </Layout>
-  );
+  )
 };
