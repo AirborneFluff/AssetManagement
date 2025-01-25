@@ -14,10 +14,12 @@ interface MenuSection {
   baseRoute: string;
   children: {label: string, route: string}[];
   requiredModule?: AppModule;
+  requiresSystemAccess?: boolean;
 }
 
 export default function AppLayout({children}: {children: ReactNode}) {
   const user = useSelector((state: RootState) => state.user.user);
+  const isSuperUser = user?.role === 'SuperUser';
   const navigate = useNavigate();
 
   const menuConfig: MenuSection[] = [
@@ -47,15 +49,22 @@ export default function AppLayout({children}: {children: ReactNode}) {
       ],
       requiredModule: 'SALES_ORDERS'
     },
+    {
+      label: 'System',
+      baseRoute: '/system',
+      children: [
+        {label: 'Test', route: '/'},
+      ],
+      requiresSystemAccess: true
+    },
   ];
 
   function buildMenuItems(config: MenuSection[]): MenuProps['items'] {
     const menuItems: MenuProps['items'] = [];
 
     config.forEach((section) => {
-      if (section.requiredModule && (!user || !user.modules.includes(section.requiredModule))) {
-        return;
-      }
+      if (section.requiresSystemAccess && !isSuperUser) return;
+      if (section.requiredModule && (!user || !user.modules.includes(section.requiredModule))) return;
 
       if (menuItems.length === 0) {
         menuItems.push({ type: 'divider' });

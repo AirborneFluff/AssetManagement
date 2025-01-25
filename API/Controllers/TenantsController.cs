@@ -1,7 +1,9 @@
 using API.Domain.Authentication.Dtos;
 using API.Domain.Authentication.Features;
+using API.Domain.Shared.Params;
 using API.Domain.Tenant.DTOs;
 using API.Domain.Tenant.Features;
+using API.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -41,5 +43,17 @@ public class TenantsController(IMediator mediator) : BaseApiController
         if (result.IsFailed) return BadRequest(result.Errors);
 
         return Ok(result.Value);
+    }
+    
+    [HttpGet]
+    [Authorize(Roles = "SuperUser")]
+    public async Task<IActionResult> GetTenants([FromQuery]SortableParams pageParams)
+    {
+        var command = new GetTenantsCommand(pageParams);
+        var result = await mediator.Send(command);
+        if (result.IsFailed) return BadRequest(result.Errors);
+        
+        Response.AddPaginationHeaders(result.Value);
+        return Ok(result.Value.Items);
     }
 }

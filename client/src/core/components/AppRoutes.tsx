@@ -7,8 +7,9 @@ import { RootState } from '../data/store.ts';
 import { AppModule } from '../data/entities/app-module.ts';
 
 const AssetsHome = React.lazy(() => import('../../features/assets/AssetsRoutes.tsx'));
-const SalesOrdersHome = React.lazy(() => import('../../features/sales-orders/test-route/SalesOrderTestScreen.tsx'));
-const PurchaseOrdersHome = React.lazy(() => import('../../features/purchase-orders/test-route/PurchaseOrderTestScreen.tsx'));
+const SalesOrdersHome = React.lazy(() => import('../../features/sales-orders/SalesOrdersRoutes.tsx'));
+const PurchaseOrdersHome = React.lazy(() => import('../../features/purchase-orders/PurchaseOrdersRoutes.tsx'));
+const SystemHome = React.lazy(() => import('../../features/system/SystemRoutes.tsx'));
 
 interface ProtectedRoute {
   requiredModule?: AppModule;
@@ -17,6 +18,7 @@ interface ProtectedRoute {
 
 export default function AppRoutes() {
   const user = useSelector((state: RootState) => state.user.user);
+  const isSuperUser = user?.role === 'SuperUser';
 
   const routes: ProtectedRoute[] = [
     {
@@ -49,6 +51,7 @@ export default function AppRoutes() {
         <Routes>
           <Route path="/" element={<Navigate to='assets' />} />
           {renderRoutes()}
+          {isSuperUser && <Route path="system/*" element={<SystemHome />} />}
         </Routes>
       </React.Suspense>
     </AppLayout>

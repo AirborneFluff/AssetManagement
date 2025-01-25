@@ -17,6 +17,12 @@ export const authApi = baseApi.injectEndpoints({
         body: dto
       }),
     }),
+    switchTenant: builder.mutation<User, string>({
+      query: (tenantId) => ({
+        url: '/auth/switchTenant?tenantId=' + tenantId,
+        method: 'POST'
+      }),
+    }),
     getUser: builder.query<User, void>({
       query: () => ({
         url: '/auth',
@@ -31,4 +37,5 @@ export const {
   useLoginMutation,
   useLogoutMutation,
   useGetUserQuery,
+  useSwitchTenantMutation,
 } = authApi;
